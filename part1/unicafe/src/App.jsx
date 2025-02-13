@@ -6,27 +6,40 @@ const Button = (props) => {
   )
 }
 
-const Percentage = ({ total, toCalc, text }) => {
-  if (total > 0) {
-    const percentage = (toCalc / total) * 100;
-    
-    return (
-      <p>{text}: {percentage} %</p>
+const Statistics = (props) => {
+  let rating = (
+    <>
+      <p>Average: 0</p>
+      <p>Positive: 0 %</p>
+    </>
+  )
+
+  if (props.total > 0) {
+    const avgGood = props.good * 1;
+    const avgBad = props.bad * -1;
+    const newAverage = (avgGood + avgBad) / props.total;
+
+    const positivePercent = (props.good / props.total) * 100;
+
+    rating = (
+      <>
+        <p>Average: {newAverage}</p>
+        <p>Positive: {positivePercent} %</p>
+      </>
     )
   }
-  return (<p>{text}: 0 %</p>)
-}
 
-const Average = ({ good, bad, total }) => {
-  if (total > 0) {
-    const avgGood = good * 1;
-    const avgBad = bad * -1;
-    const newAverage = (avgGood + avgBad) / total;
+  return (
+    <>
+      <h2>Statistics</h2>
+      <p>Good: {props.good}</p>
+      <p>Neutral: {props.neutral}</p>
+      <p>Bad: {props.bad}</p>
+      <p>All: {props.total}</p>
 
-    return (<p>Average: {newAverage}</p>)
-  }
-
-  return (<p>Average: 0</p>)
+      {rating}
+    </>
+  )
 }
 
 function App() {
@@ -58,8 +71,6 @@ function App() {
     setAll(newAll);
   }
 
-  
-
   return (
     <>
       <div>
@@ -69,14 +80,8 @@ function App() {
         <Button onClick={countBad} text={'Bad :('} />
       </div>
       <div>
-        <h2>Statistics</h2>
-        <p>Good: {good}</p>
-        <p>Neutral: {neutral}</p>
-        <p>Bad: {bad}</p>
-        <p>All: {all}</p>
-
-        <Average good={good} bad={bad} total={all} />
-        <Percentage total={all} toCalc={good} text={'Positive'} />
+        <Statistics good={good} neutral={neutral} bad={bad}
+          total={all} />
       </div>
     </>
   )
