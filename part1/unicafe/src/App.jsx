@@ -6,23 +6,59 @@ const Button = (props) => {
   )
 }
 
+const Percentage = ({ total, toCalc, text }) => {
+  if (total > 0) {
+    const percentage = (toCalc / total) * 100;
+    
+    return (
+      <p>{text}: {percentage} %</p>
+    )
+  }
+  return (<p>{text}: 0 %</p>)
+}
+
+const Average = ({ good, bad, total }) => {
+  if (total > 0) {
+    const avgGood = good * 1;
+    const avgBad = bad * -1;
+    const newAverage = (avgGood + avgBad) / total;
+
+    return (<p>Average: {newAverage}</p>)
+  }
+
+  return (<p>Average: 0</p>)
+}
+
 function App() {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
-
+  const [all, setAll] = useState(0);
 
   const countGood = () => {
-    setGood(good + 1);
+    const newGood = good + 1;
+    setGood(newGood);
+    calcTotal();
   }
 
   const countNeutral = () => {
-    setNeutral(neutral + 1);
+    const newNeutral = neutral + 1;
+    setNeutral(newNeutral);
+    calcTotal();
   }
 
   const countBad = () => {
-    setBad(bad + 1);
+    const newBad = bad + 1;
+    setBad(newBad);
+    calcTotal();
   }
+
+  const calcTotal = () => {
+    const newAll = all + 1;
+    setAll(newAll);
+  }
+
+  
 
   return (
     <>
@@ -37,6 +73,10 @@ function App() {
         <p>Good: {good}</p>
         <p>Neutral: {neutral}</p>
         <p>Bad: {bad}</p>
+        <p>All: {all}</p>
+
+        <Average good={good} bad={bad} total={all} />
+        <Percentage total={all} toCalc={good} text={'Positive'} />
       </div>
     </>
   )
