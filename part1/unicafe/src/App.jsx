@@ -7,10 +7,10 @@ const Button = (props) => {
 }
 
 const Statistics = (props) => {
-  let rating = (
+  let statsData = (
     <>
-      <p>Average: 0</p>
-      <p>Positive: 0 %</p>
+      <h2>Statistics</h2>
+      <p>No feedback given</p>
     </>
   )
 
@@ -21,8 +21,14 @@ const Statistics = (props) => {
 
     const positivePercent = (props.good / props.total) * 100;
 
-    rating = (
+    statsData = (
       <>
+        <h2>Statistics</h2>
+        <p>Good: {props.good}</p>
+        <p>Neutral: {props.neutral}</p>
+        <p>Bad: {props.bad}</p>
+        <p>All: {props.total}</p>
+
         <p>Average: {newAverage}</p>
         <p>Positive: {positivePercent} %</p>
       </>
@@ -31,13 +37,7 @@ const Statistics = (props) => {
 
   return (
     <>
-      <h2>Statistics</h2>
-      <p>Good: {props.good}</p>
-      <p>Neutral: {props.neutral}</p>
-      <p>Bad: {props.bad}</p>
-      <p>All: {props.total}</p>
-
-      {rating}
+      {statsData}
     </>
   )
 }
