@@ -6,9 +6,14 @@ const Button = (props) => {
   )
 }
 
+const TopAnecdote = (props) => {
+  return (<p>{props.text}</p>)
+}
+
 const App = () => {
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(new Uint16Array(8));
+  const [topAnecdote, setTopAnecdote] = useState(0);
 
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -34,15 +39,36 @@ const App = () => {
     const newVotes = [...votes]
     newVotes[anecdote] += 1;
     setVotes(newVotes);
+    getTopAnecdote(newVotes);
+  }
+
+  const getTopAnecdote = (newVotes) => {
+    let numVotes = 0;
+    let anecdoteIndex = 0;
+
+    newVotes.forEach(function(value, element) {
+      if (value > numVotes) {
+        numVotes = value;
+        anecdoteIndex = element;
+      }
+    });
+
+    setTopAnecdote(anecdoteIndex);
   }
 
   return (
     <>
       <div>
+        <h1>Anecdote of the day</h1>
         <p>{anecdotes[selected]}</p>
         <p>has {votes[selected]} votes</p>
         <Button onClick={() => handleVoteClick(selected)} text={'Vote'} />
         <Button onClick={handleAnecdoteClick} text={'Next anecdote'} />
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+        <TopAnecdote text={anecdotes[topAnecdote]} />
+        <p>has {votes[topAnecdote]} votes</p>
       </div>
     </>
   )
