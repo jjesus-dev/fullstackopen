@@ -24,6 +24,7 @@ const Part = ({ part }) => (
 
 const Total = ({ parts }) => {
   const exercises = parts.map(part => part.exercises);
+  // to calculate the sum of values in an array
   const totalExercises = exercises.reduce(
     (total, current) => total + current, 0);
 
