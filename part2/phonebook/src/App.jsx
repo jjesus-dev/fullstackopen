@@ -12,12 +12,24 @@ const App = () => {
       name: newName, 
     }
 
-    setPersons(persons.concat(personObject));
-    setNewName('');
+    if (checkDuplicates(newName)) {
+      const messageTemplate = `${newName} already exists, choose another one.`;
+      alert(messageTemplate);
+    } else {
+      setPersons(persons.concat(personObject));
+      setNewName('');
+    }
   }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
+  }
+
+  const checkDuplicates = (personName) => {
+    const namesList = persons.map(person => person.name);
+    const personExists = namesList.includes(personName);
+
+    return personExists;
   }
 
   return (
