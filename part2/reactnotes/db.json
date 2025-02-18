@@ -23,6 +23,11 @@
     {
       "id": "0d79",
       "content": "Using axios to post new notes",
+      "important": true
+    },
+    {
+      "id": "5f3a",
+      "content": "Testing notes module",
       "important": false
     }
   ]
