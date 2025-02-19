@@ -49,12 +49,14 @@ const Persons = (props) => {
 }
 
 const App = () => {
+  const defaultMessage = { text: null, success: true };
+
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [actionMessage, setActionMessage] = useState(null)
-  
+  const [actionMessage, setActionMessage] = useState(defaultMessage)
+
   const personsHook = () => {
     personService.getAll()
       .then(initialPersons => {
@@ -79,9 +81,10 @@ const App = () => {
         setNewName('');
         setNewNumber('');
 
-        setActionMessage(`Added ${returnedPerson.name}`);
+        const newMessage = { text: `Added ${returnedPerson.name}`, success: true }
+        setActionMessage(newMessage);
         setTimeout(() => {
-          setActionMessage(null);
+          setActionMessage(defaultMessage);
         }, 4000);
       })
     }
@@ -93,18 +96,19 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.filter(person => person.id !== returnedPerson.id));
 
-          setActionMessage(`Deleted ${returnedPerson.name}`);
+          const newMessage = { text: `Deleted ${returnedPerson.name}`, success: true }
+          setActionMessage(newMessage);
           setTimeout(() => {
-            setActionMessage(null);
+            setActionMessage(defaultMessage);
           }, 4000);
         })
     }
   }
 
   const updateNumber = (newObject) => {
-    const messageTemplate = `${newObject.name} is already added to the phonebook, replace old number with the new one?`;
+    const messageConfirm = `${newObject.name} is already added to the phonebook, replace old number with the new one?`;
 
-    if (window.confirm(messageTemplate)) {
+    if (window.confirm(messageConfirm)) {
       const filteredPerson = persons.find(person => person.name === newObject.name);
       
       personService.update(filteredPerson.id, newObject)
@@ -114,9 +118,16 @@ const App = () => {
           setNewName('');
           setNewNumber('');
 
-          setActionMessage(`Updated ${returnedPerson.name}'s number to (${returnedPerson.number})`);
+          const newMessage = { text: `Updated ${returnedPerson.name}'s number to (${returnedPerson.number})`, success: true }
+          setActionMessage(newMessage);
           setTimeout(() => {
-            setActionMessage(null);
+            setActionMessage(defaultMessage);
+          }, 4000);
+        }).catch(error => {
+          const newMessage = { text: `Information of ${newObject.name} has already been removed from the server`, success: false }
+          setActionMessage(newMessage);
+          setTimeout(() => {
+            setActionMessage(defaultMessage);
           }, 4000);
         })
     }

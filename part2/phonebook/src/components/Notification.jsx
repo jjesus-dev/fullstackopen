@@ -1,15 +1,21 @@
-const Notification = ({ actionPerformed }) => {
-  const templateMessage = `${actionPerformed}`;
-
-  if (actionPerformed === null) {
+const Notification = (props) => {
+  if (props.actionPerformed.text === null) {
     return null;
   }
 
-  return (
-    <div className="messageBox">
-      <p>{templateMessage}</p>
-    </div>
-  )
+  if (props.actionPerformed.text !== null && props.actionPerformed.success) {
+    return (
+      <div className="messageBox">
+        <p>{props.actionPerformed.text}</p>
+      </div>
+    )
+  } else {
+    return (
+      <div className="errorMessage">
+        <p>{props.actionPerformed.text}</p>
+      </div>
+    )
+  }
 }
 
 export default Notification;
