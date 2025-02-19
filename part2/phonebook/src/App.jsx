@@ -70,8 +70,7 @@ const App = () => {
     }
 
     if (checkDuplicates(newName)) {
-      const messageTemplate = `${newName} already exists, choose another one.`;
-      alert(messageTemplate);
+      updateNumber(personObject);
     } else {
       personService.create(personObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson));
@@ -85,8 +84,24 @@ const App = () => {
     if (window.confirm(`Delete ${personObject.name}?`)) {
       personService.delete(personObject.id)
         .then(returnedPerson => {
-          console.log('deleted', returnedPerson);
+          
           setPersons(persons.filter(person => person.id !== returnedPerson.id));
+        })
+    }
+  }
+
+  const updateNumber = (newObject) => {
+    const messageTemplate = `${newObject.name} is already added to the phonebook, replace old number with the new one?`;
+
+    if (window.confirm(messageTemplate)) {
+      const filteredPerson = persons.find(person => person.name === newObject.name);
+      
+      personService.update(filteredPerson.id, newObject)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id === filteredPerson.id 
+            ? returnedPerson : person));
+          setNewName('');
+          setNewNumber('');
         })
     }
   }
