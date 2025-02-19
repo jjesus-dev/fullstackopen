@@ -61,17 +61,19 @@ const App = () => {
     event.preventDefault();
     const personObject = { 
       name: newName,
-      number: newNumber,
-      id: persons.length + 1
+      number: newNumber
     }
 
     if (checkDuplicates(newName)) {
       const messageTemplate = `${newName} already exists, choose another one.`;
       alert(messageTemplate);
     } else {
-      setPersons(persons.concat(personObject));
-      setNewName('');
-      setNewNumber('');
+      axios.post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data));
+          setNewName('');
+          setNewNumber('');
+        })
     }
   }
 
