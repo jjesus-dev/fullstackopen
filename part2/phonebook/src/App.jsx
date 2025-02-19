@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 
+import personService from './services/persons';
+
 const Filter = (props) => {
   return (
     <div>
@@ -48,11 +50,10 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   
   const personsHook = () => {
-    console.log('effect')
-    axios.get('http://localhost:3001/persons').then(response => {
-      console.log('promise Ok');
-      setPersons(response.data);
-    })
+    personService.getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons);
+      })
   }
 
   useEffect(personsHook, []);
@@ -68,12 +69,11 @@ const App = () => {
       const messageTemplate = `${newName} already exists, choose another one.`;
       alert(messageTemplate);
     } else {
-      axios.post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data));
-          setNewName('');
-          setNewNumber('');
-        })
+      personService.create(personObject).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      })
     }
   }
 
