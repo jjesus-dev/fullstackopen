@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
-import axios from "axios"
 
+import Notification from "./components/Notification";
 import personService from './services/persons';
+import './index.css';
 
 const Filter = (props) => {
   return (
@@ -16,7 +17,7 @@ const Filter = (props) => {
 
 const PersonForm = (props) => {
   return (
-    <form onSubmit={props.onSubmit}>
+    <form onSubmit={props.onSubmit} className="formControls">
       <div>
         Name: <input type="text" id="personName"
           value={props.newName}
@@ -36,11 +37,11 @@ const PersonForm = (props) => {
 
 const Persons = (props) => {
   return (
-    <ul>
+    <ul className="numbersList">
       {props.names.map(person => <li key={person.id}>
           {person.name} ({person.number})
           <span>
-            &nbsp;<button onClick={() => props.onClick(person)}>delete</button>
+            <button onClick={() => props.onClick(person)}>delete</button>
           </span>
         </li>)}
     </ul>
@@ -52,6 +53,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [actionMessage, setActionMessage] = useState(null)
   
   const personsHook = () => {
     personService.getAll()
@@ -76,6 +78,11 @@ const App = () => {
         setPersons(persons.concat(returnedPerson));
         setNewName('');
         setNewNumber('');
+
+        setActionMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setActionMessage(null);
+        }, 4000);
       })
     }
   }
@@ -84,8 +91,12 @@ const App = () => {
     if (window.confirm(`Delete ${personObject.name}?`)) {
       personService.delete(personObject.id)
         .then(returnedPerson => {
-          
           setPersons(persons.filter(person => person.id !== returnedPerson.id));
+
+          setActionMessage(`Deleted ${returnedPerson.name}`);
+          setTimeout(() => {
+            setActionMessage(null);
+          }, 4000);
         })
     }
   }
@@ -102,6 +113,11 @@ const App = () => {
             ? returnedPerson : person));
           setNewName('');
           setNewNumber('');
+
+          setActionMessage(`Updated ${returnedPerson.name}'s number to (${returnedPerson.number})`);
+          setTimeout(() => {
+            setActionMessage(null);
+          }, 4000);
         })
     }
   }
@@ -135,7 +151,10 @@ const App = () => {
         <h1>Phonebook</h1>
         <Filter newFilter={newFilter} onChange={handleFilterChange} />
       </div>
-      
+      <br />
+      <Notification 
+        actionPerformed={actionMessage} />
+
       <div>
         <h2>Add a new person</h2>
         <PersonForm onSubmit={addName}
