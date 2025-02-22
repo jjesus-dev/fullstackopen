@@ -1,14 +1,9 @@
 import Country from "./Country"
-import CountryDetail from "./CountryDetail";
 
 const Content = (props) => {
     const count = props.countries.length;
 
-    if (count == 1) {
-        return (
-            <CountryDetail country={props.countries[0]} />
-        )
-    } else if (count >= 1 && count <= 10) {
+    if (count >= 1 && count <= 10) {
         return (    
             <ol>
             {props.countries.map(country => 

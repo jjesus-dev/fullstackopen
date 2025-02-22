@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import countryService from './services/countries';
+import CountryDetail from './components/CountryDetail';
 import Content from './components/Content';
 import Search from './components/Search';
 
@@ -30,8 +31,10 @@ function App() {
         country => country.name.common.toLowerCase()
         .includes(searchValue.toLowerCase())
       );
-      
+
       setFilteredCountries(countriesToShow);
+    } else {
+      setFilteredCountries([]);
     }
   }
 
@@ -46,6 +49,8 @@ function App() {
       <div>
         <Content countries={filteredCountries} />
       </div>
+
+      <CountryDetail countries={filteredCountries} />
     </>
   )
 }
