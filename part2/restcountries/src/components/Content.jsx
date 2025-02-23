@@ -9,8 +9,9 @@ const Content = (props) => {
         return (    
             <ol>
             {props.countries.map(country => 
-                <Country name={country.name.common}
-                    key={country.cca2} />
+                <Country country={country}
+                    key={country.cca2}
+                    showCountry={props.showCountryInfo} />
             )}
             </ol>
         )

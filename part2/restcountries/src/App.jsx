@@ -38,6 +38,18 @@ function App() {
     }
   }
 
+  const showCountryInfo = (name) => {
+    console.log(name);
+    const countryInfo = countries.filter(
+      country => country.name.common.toLowerCase()
+      .includes(name.toLowerCase())
+    );
+    
+    setFilteredCountries(countryInfo);
+    setSearch(name);
+  }
+
+
   return (
     <>
       <h1>Countries App</h1>
@@ -47,7 +59,8 @@ function App() {
         </form>
       </div>
       <div>
-        <Content countries={filteredCountries} />
+        <Content countries={filteredCountries} 
+          showCountryInfo={showCountryInfo} />
       </div>
 
       <CountryDetail countries={filteredCountries} />

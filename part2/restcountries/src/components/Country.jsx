@@ -1,6 +1,8 @@
-const Country = (props) => {
+const Country = ({ country, showCountry }) => {
     return (
-        <li key={props.id}>{props.name}</li>
+        <li>{country.name.common}&nbsp;
+            <button onClick={() => showCountry(country.name.common)}>Show</button>
+        </li>
     )
 }
 
