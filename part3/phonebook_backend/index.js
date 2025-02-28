@@ -28,6 +28,14 @@ app.get('/', (request, response) => {
     response.send('<p>Phone numbers</p>');
 })
 
+app.get('/info', (request, response) => {
+    const count = numbers.length;
+    const now = new Date();
+    const message = `<p>Phonebook has info for ${count} people</p><br /><p>${now.toString()}</p>`;
+
+    response.send(message);
+})
+
 app.get('/api/persons', (request, response) => {
     response.json(numbers);
 })
