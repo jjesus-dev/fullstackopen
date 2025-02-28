@@ -46,6 +46,10 @@ app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id);
     const number = numbers.find(n => n.id === id);
 
+    if (!number) {
+        return response.status(404).end();
+    }
+
     response.json(number);
 })
 
@@ -53,7 +57,7 @@ app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id);
     numbers = numbers.filter(n => n.id !== id);
 
-    response.status('204').end();
+    response.status(204).end();
 })
 
 const getRandomId = () => {
