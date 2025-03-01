@@ -96,7 +96,7 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.filter(person => person.id !== returnedPerson.id));
 
-          const newMessage = { text: `Deleted ${returnedPerson.name}`, success: true }
+          const newMessage = { text: `Deleted ${personObject.name}`, success: true }
           setActionMessage(newMessage);
           setTimeout(() => {
             setActionMessage(defaultMessage);
