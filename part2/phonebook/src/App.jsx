@@ -94,7 +94,7 @@ const App = () => {
     if (window.confirm(`Delete ${personObject.name}?`)) {
       personService.delete(personObject.id)
         .then(returnedPerson => {
-          setPersons(persons.filter(person => person.id !== returnedPerson.id));
+          setPersons(persons.filter(person => person.id !== personObject.id));
 
           const newMessage = { text: `Deleted ${personObject.name}`, success: true }
           setActionMessage(newMessage);
