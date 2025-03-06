@@ -86,6 +86,12 @@ const App = () => {
         setTimeout(() => {
           setActionMessage(defaultMessage);
         }, 4000);
+      }).catch(error => {
+        const newMessage = { text: error.response.data.error, success: false }
+        setActionMessage(newMessage);
+        setTimeout(() => {
+          setActionMessage(defaultMessage);
+        }, 4000);
       })
     }
   }
@@ -97,6 +103,13 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== personObject.id));
 
           const newMessage = { text: `Deleted ${personObject.name}`, success: true }
+          setActionMessage(newMessage);
+          setTimeout(() => {
+            setActionMessage(defaultMessage);
+          }, 4000);
+        })
+        .catch(error => {
+          const newMessage = { text: error.response.data.error, success: false }
           setActionMessage(newMessage);
           setTimeout(() => {
             setActionMessage(defaultMessage);
@@ -124,7 +137,7 @@ const App = () => {
             setActionMessage(defaultMessage);
           }, 4000);
         }).catch(error => {
-          const newMessage = { text: `Information of ${newObject.name} has already been removed from the server`, success: false }
+          const newMessage = { text: error.response.data.error, success: false }
           setActionMessage(newMessage);
           setTimeout(() => {
             setActionMessage(defaultMessage);
