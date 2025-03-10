@@ -35,6 +35,14 @@ const blogs = [
 
 const oneBlogList = Array.of(blogs[1]);
 
+const favorite = {
+  "title": "Blog1",
+  "author": "John",
+  "url": "https://example.com/",
+  "likes": 13,
+  "id": "1"
+};
+
 describe('Total likes', () => {
   test('of empty list is zero', () => {
     assert.strictEqual(listHelper.totalLikes([]), 0);
@@ -46,5 +54,11 @@ describe('Total likes', () => {
 
   test('of a bigger list is calculated right', () => {
     assert.strictEqual(listHelper.totalLikes(blogs), 19);
+  });
+});
+
+describe('Blog', () => {
+  test('with the most likes found', () => {
+    assert.deepStrictEqual(listHelper.favoriteBlog(blogs), favorite);
   });
 });
