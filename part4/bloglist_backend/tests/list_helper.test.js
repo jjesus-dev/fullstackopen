@@ -30,6 +30,13 @@ const blogs = [
     "url": "https://example3.com/",
     "likes": 4,
     "id": "3"
+  },
+  {
+    "title": "Blog4",
+    "author": "Jane",
+    "url": "https://example2.com/new",
+    "likes": 2,
+    "id": "4"
   }
 ];
 
@@ -43,6 +50,11 @@ const favorite = {
   "id": "1"
 };
 
+const authorWithMostBlogs = {
+  "author": "Jane",
+  "blogs": 2,
+};
+
 describe('Total likes', () => {
   test('of empty list is zero', () => {
     assert.strictEqual(listHelper.totalLikes([]), 0);
@@ -53,12 +65,19 @@ describe('Total likes', () => {
   });
 
   test('of a bigger list is calculated right', () => {
-    assert.strictEqual(listHelper.totalLikes(blogs), 19);
+    assert.strictEqual(listHelper.totalLikes(blogs), 21);
   });
 });
 
 describe('Blog', () => {
   test('with the most likes found', () => {
     assert.deepStrictEqual(listHelper.favoriteBlog(blogs), favorite);
+  });
+});
+
+//listHelper.mostBlogs(blogs);
+describe('Author', () => {
+  test('with the most blogs found', () => {
+    assert.deepStrictEqual(listHelper.mostBlogs(blogs), authorWithMostBlogs);
   });
 });
