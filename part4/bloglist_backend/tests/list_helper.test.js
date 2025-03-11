@@ -35,7 +35,7 @@ const blogs = [
     "title": "Blog4",
     "author": "Jane",
     "url": "https://example2.com/new",
-    "likes": 2,
+    "likes": 6,
     "id": "4"
   }
 ];
@@ -55,6 +55,11 @@ const authorWithMostBlogs = {
   "blogs": 2,
 };
 
+const authorWithMostLikes = {
+  "author": "John",
+  "likes": 13,
+};
+
 describe('Total likes', () => {
   test('of empty list is zero', () => {
     assert.strictEqual(listHelper.totalLikes([]), 0);
@@ -65,7 +70,7 @@ describe('Total likes', () => {
   });
 
   test('of a bigger list is calculated right', () => {
-    assert.strictEqual(listHelper.totalLikes(blogs), 21);
+    assert.strictEqual(listHelper.totalLikes(blogs), 25);
   });
 });
 
@@ -75,9 +80,12 @@ describe('Blog', () => {
   });
 });
 
-//listHelper.mostBlogs(blogs);
 describe('Author', () => {
   test('with the most blogs found', () => {
     assert.deepStrictEqual(listHelper.mostBlogs(blogs), authorWithMostBlogs);
+  });
+
+  test('with the most liked blogs', () => {
+    assert.deepStrictEqual(listHelper.mostLikes(blogs), authorWithMostLikes);
   });
 });
