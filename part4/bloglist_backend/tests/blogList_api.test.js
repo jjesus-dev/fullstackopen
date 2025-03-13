@@ -8,6 +8,16 @@ const api = supertest(app);
 
 const Blog = require('../models/blog');
 
+beforeEach(async () => {
+  await Blog.deleteMany({});
+
+  const blogList = listHelper.initialBlogs
+    .map(blog => new Blog(blog));
+
+  const promiseList = blogList.map(blog => blog.save());
+  await Promise.all(promiseList);
+});
+
 test('list is returned as json', async () => {
   await api
     .get('/api/blogs')
@@ -27,6 +37,26 @@ test('all blogs have an id', async () => {
   const blogsWithId = response.body.filter((b) =>  Object.hasOwn(b, 'id') === true);
 
   assert.strictEqual(blogsWithId.length, listHelper.initialBlogs.length);
+});
+
+test('a new blog is added to the list', async () => {
+  const newBlog = {
+    title: 'New Entry',
+    author: 'Alex Some',
+    url: 'https://myblogishere.net/',
+    likes: 5
+  };
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await api.get('/api/blogs');
+  assert.strictEqual(blogsAtEnd.body.length, listHelper.initialBlogs.length + 1);
+
+  const urls = blogsAtEnd.body.map(b => b.url);
+  assert(urls.includes('https://myblogishere.net/'));
 });
 
 after(async () => {
