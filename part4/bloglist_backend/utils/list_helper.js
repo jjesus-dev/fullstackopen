@@ -1,5 +1,54 @@
 const _ = require('lodash');
 
+const initialBlogs = [
+  {
+    title: 'Blog1',
+    author: 'John',
+    url: 'https://example.com/',
+    likes: 13,
+    id: '1'
+  },
+  {
+    title: 'Blog2',
+    author: 'Jane',
+    url: 'https://example2.com/',
+    likes: 2,
+    id: '2'
+  },
+  {
+    title: 'Blog3',
+    author: 'Guy',
+    url: 'https://example3.com/',
+    likes: 4,
+    id: '3'
+  },
+  {
+    title: 'Blog4',
+    author: 'Jane',
+    url: 'https://example2.com/new',
+    likes: 6,
+    id: '4'
+  }
+];
+
+const favorite = {
+  title: 'Blog1',
+  author: 'John',
+  url: 'https://example.com/',
+  likes: 13,
+  id: '1'
+};
+
+const authorWithMostBlogs = {
+  author: 'Jane',
+  blogs: 2,
+};
+
+const authorWithMostLikes = {
+  author: 'John',
+  likes: 13,
+};
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -71,5 +120,6 @@ const mostLikes = (blogs) => {
 };
 
 module.exports = {
-  dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes
+  dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes,
+  initialBlogs, favorite, authorWithMostBlogs, authorWithMostLikes
 };
