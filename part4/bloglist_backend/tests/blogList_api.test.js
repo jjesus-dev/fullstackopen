@@ -21,6 +21,14 @@ test('all blogs are returned', async () => {
   assert.strictEqual(response.body.length, listHelper.initialBlogs.length);
 });
 
+test('all blogs have an id', async () => {
+  const response = await api.get('/api/blogs');
+
+  const blogsWithId = response.body.filter((b) =>  Object.hasOwn(b, 'id') === true);
+
+  assert.strictEqual(blogsWithId.length, listHelper.initialBlogs.length);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
