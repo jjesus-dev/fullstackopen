@@ -32,7 +32,7 @@ const mostBlogs = (blogs) => {
   blogs.forEach((blog) => {
     if (temp.findIndex((t) =>
       t.author.toLowerCase() === blog.author.toLowerCase()) < 0) {
-        temp.push({ "author": blog.author, "blogs": 0 });
+      temp.push({ 'author': blog.author, 'blogs': 0 });
     }
   });
 
@@ -50,8 +50,8 @@ const mostBlogs = (blogs) => {
     }
   });
 
-	authorWithMostBlogs.blogs = blogCount;
-	
+  authorWithMostBlogs.blogs = blogCount;
+
   return authorWithMostBlogs;
 };
 
@@ -64,9 +64,9 @@ const mostLikes = (blogs) => {
     }))
     .maxBy('likes')
     .value();
-  
+
   console.log(likesSum);
-	
+
   return likesSum;
 };
 

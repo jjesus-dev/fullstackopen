@@ -11,53 +11,53 @@ test('Dummy returns one', () => {
 
 const blogs = [
   {
-    "title": "Blog1",
-    "author": "John",
-    "url": "https://example.com/",
-    "likes": 13,
-    "id": "1"
+    'title': 'Blog1',
+    'author': 'John',
+    'url': 'https://example.com/',
+    'likes': 13,
+    'id': '1'
   },
   {
-    "title": "Blog2",
-    "author": "Jane",
-    "url": "https://example2.com/",
-    "likes": 2,
-    "id": "2"
+    'title': 'Blog2',
+    'author': 'Jane',
+    'url': 'https://example2.com/',
+    'likes': 2,
+    'id': '2'
   },
   {
-    "title": "Blog3",
-    "author": "Guy",
-    "url": "https://example3.com/",
-    "likes": 4,
-    "id": "3"
+    'title': 'Blog3',
+    'author': 'Guy',
+    'url': 'https://example3.com/',
+    'likes': 4,
+    'id': '3'
   },
   {
-    "title": "Blog4",
-    "author": "Jane",
-    "url": "https://example2.com/new",
-    "likes": 6,
-    "id": "4"
+    'title': 'Blog4',
+    'author': 'Jane',
+    'url': 'https://example2.com/new',
+    'likes': 6,
+    'id': '4'
   }
 ];
 
 const oneBlogList = Array.of(blogs[1]);
 
 const favorite = {
-  "title": "Blog1",
-  "author": "John",
-  "url": "https://example.com/",
-  "likes": 13,
-  "id": "1"
+  'title': 'Blog1',
+  'author': 'John',
+  'url': 'https://example.com/',
+  'likes': 13,
+  'id': '1'
 };
 
 const authorWithMostBlogs = {
-  "author": "Jane",
-  "blogs": 2,
+  'author': 'Jane',
+  'blogs': 2,
 };
 
 const authorWithMostLikes = {
-  "author": "John",
-  "likes": 13,
+  'author': 'John',
+  'likes': 13,
 };
 
 describe('Total likes', () => {
