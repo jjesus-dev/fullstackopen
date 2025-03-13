@@ -44,6 +44,13 @@ const authorWithMostLikes = {
   likes: 13,
 };
 
+const blogWithoutLikes = {
+  title: 'Lonely Stu',
+  author: 'Steward',
+  url: 'https://nobodylikesme.com/',
+  likes: 0
+};
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -116,5 +123,6 @@ const mostLikes = (blogs) => {
 
 module.exports = {
   dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes,
-  initialBlogs, favorite, authorWithMostBlogs, authorWithMostLikes
+  initialBlogs, favorite, authorWithMostBlogs, authorWithMostLikes,
+  blogWithoutLikes
 };

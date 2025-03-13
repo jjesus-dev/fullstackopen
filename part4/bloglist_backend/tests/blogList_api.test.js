@@ -59,6 +59,19 @@ test('a new blog is added to the list', async () => {
   assert(urls.includes('https://myblogishere.net/'));
 });
 
+test('blog without likes gets 0 by default', async () => {
+  await api.post('/api/blogs')
+    .send(listHelper.blogWithoutLikes)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await api.get('/api/blogs');
+  assert.strictEqual(blogsAtEnd.body.length, listHelper.initialBlogs.length + 1);
+
+  const newBlogLikes = blogsAtEnd.body[blogsAtEnd.body.length - 1].likes;
+  assert.deepStrictEqual(newBlogLikes, listHelper.blogWithoutLikes.likes);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
