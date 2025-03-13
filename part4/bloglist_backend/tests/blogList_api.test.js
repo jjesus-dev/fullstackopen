@@ -72,6 +72,21 @@ test('blog without likes gets 0 by default', async () => {
   assert.deepStrictEqual(newBlogLikes, listHelper.blogWithoutLikes.likes);
 });
 
+test('when title or url are missing, blog its not added', async () => {
+  const incompleteBlog = {
+    title: '',
+    author: 'Natalie',
+    likes: 0
+  };
+
+  await api.post('/api/blogs')
+    .send(incompleteBlog)
+    .expect(400);
+
+  const blogsAtEnd = await api.get('/api/blogs');
+  assert.strictEqual(blogsAtEnd.body.length, listHelper.initialBlogs.length);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
