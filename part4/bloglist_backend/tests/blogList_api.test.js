@@ -100,6 +100,22 @@ test('delete a blog from the list', async () => {
   assert(!urls.includes(blogToDelete.url));
 });
 
+test('update likes of a given blog', async () => {
+  const blogsAtStart = await api.get('/api/blogs');
+  const blogToUpdate = blogsAtStart.body[0];
+
+  blogToUpdate.likes = 22;
+
+  await api.put(`/api/blogs/${blogToUpdate.id}`)
+    .send(blogToUpdate)
+    .expect(200);
+
+  const blogsAtEnd = await api.get('/api/blogs');
+  const updatedBlog = blogsAtEnd.body.find(b => b.id === blogToUpdate.id);
+
+  assert.deepStrictEqual(blogToUpdate, updatedBlog);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
