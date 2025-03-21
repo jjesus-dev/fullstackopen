@@ -11,6 +11,16 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body;
 
+  if (password === undefined) {
+    return response.status(400)
+      .send({ error: 'The password is missing' });
+  }
+
+  if (password !== undefined && password.length < 3) {
+    return response.status(400)
+      .send({ error: 'The password provided is too short, must be at least 3 characters long' });
+  }
+
   const saltRounds = 10;
   const salt = bcrypt.genSaltSync(saltRounds);
   const passwordHash = bcrypt.hashSync(password, salt);
