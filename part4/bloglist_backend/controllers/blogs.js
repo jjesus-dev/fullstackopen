@@ -1,29 +1,39 @@
 const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 blogsRouter.get('/', async (request, response) => {
-  const blogList = await Blog.find({});
+  const blogList = await Blog.find({})
+    .populate('user', { username: 1, name: 1 });
 
   return response.json(blogList);
 });
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body);
+  const body = request.body;
 
-  if (!Object.hasOwn(blog, 'likes')) {
-    blog.likes = 0;
+  let blogLikes = 0;
+
+  if (Object.hasOwn(body, 'likes')) {
+    blogLikes = body.likes;
   };
 
-  try {
-    const blogSaved = await blog.save();
-    return response.status(201).json(blogSaved);
-  } catch (exception) {
-    if (exception.name === 'ValidationError') {
-      return response.status(400).json({ error: exception.message });
-    } else {
-      throw Error(exception);
-    }
-  }
+  const user = await User.findById(body.userId);
+
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: blogLikes,
+    user: user._id
+  });
+
+  const savedBlog = await blog.save();
+  user.blogs = user.blogs.concat(savedBlog._id);
+
+  await user.save();
+
+  response.status(201).json(savedBlog);
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
