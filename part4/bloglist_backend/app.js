@@ -1,5 +1,6 @@
 const config = require('./utils/config');
 const logger = require('./utils/logger');
+const middleware = require('./utils/middleware');
 const express = require('express');
 require('express-async-errors');
 const blogsRouter = require('./controllers/blogs');
@@ -24,5 +25,8 @@ app.use(express.json());
 
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
+
+app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 module.exports = app;
