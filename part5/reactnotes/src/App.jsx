@@ -83,30 +83,50 @@ const App = () => {
     console.log('logging in with', username);
   }
 
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        username <input type="text"
+        value={username}
+        name="Username"
+        onChange={({ target }) => setUsername(target.value)} />
+      </div>
+      <div>
+        password <input type="password"
+        value={password}
+        name="Password"
+        onChange={({ target }) => setPassword(target.value)} />
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+  )
+
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+      <input type="text" 
+        value={newNote}
+        onChange={handleNoteChange} />
+      <button type="submit">Save</button>
+    </form>
+  )
+
   return (
     <>
       <div>
-        <h1>Notes</h1>
+        <h1>Notes App</h1>
         <Notification message={errorMessage} />
-        
-        <form onSubmit={handleLogin}>
-          <div>
-            username <input type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)} />
-          </div>
-          <div>
-            password <input type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)} />
-          </div>
 
-          <button type="submit">Login</button>
-        </form>
+        {user === null ?
+          loginForm() :
+          <div>
+            <p>{user.name} logged-in</p>
+            {noteForm()}
+          </div>
+        }
         <br />
 
+        <h2>List</h2>
         <div>
           <button onClick={() => setShowAll(!showAll)}>
             Show {showAll ? 'important' : 'all'}
@@ -118,12 +138,7 @@ const App = () => {
               toggleImportance={() => toggleImportanceOf(note.id)} />
           )}
         </ul>
-        <form onSubmit={addNote}>
-          <input type="text" 
-            value={newNote}
-            onChange={handleNoteChange} />
-          <button type="submit">Save</button>
-        </form>
+
         <Footer />
       </div>
     </>
