@@ -2,33 +2,40 @@ const _ = require('lodash');
 
 const initialBlogs = [
   {
-    title: 'Blog1',
+    title: 'Blog 1',
     author: 'John',
     url: 'https://example.com/',
     likes: 13
   },
   {
-    title: 'Blog2',
+    title: 'Blog 2',
     author: 'Jane',
     url: 'https://example2.com/',
     likes: 2
   },
   {
-    title: 'Blog3',
+    title: 'Blog 3',
     author: 'Guy',
     url: 'https://example3.com/',
     likes: 4
   },
   {
-    title: 'Blog4',
+    title: 'Blog 4',
     author: 'Jane',
     url: 'https://example2.com/new',
     likes: 6
   }
 ];
 
+const newBlog = {
+  title: 'New Entry',
+  author: 'Alex Some',
+  url: 'https://myblogishere.net/',
+  likes: 5
+};
+
 const favorite = {
-  title: 'Blog1',
+  title: 'Blog 1',
   author: 'John',
   url: 'https://example.com/',
   likes: 13
@@ -121,8 +128,17 @@ const mostLikes = (blogs) => {
   return likesSum;
 };
 
+const validUser = () => {
+  const user = {
+    username: 'testingUser',
+    password: process.env.TEST_USERSPASS
+  };
+
+  return user;
+};
+
 module.exports = {
   dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes,
-  initialBlogs, favorite, authorWithMostBlogs, authorWithMostLikes,
-  blogWithoutLikes
+  validUser, initialBlogs, newBlog, favorite,
+  authorWithMostBlogs, authorWithMostLikes, blogWithoutLikes
 };
