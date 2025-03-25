@@ -32,6 +32,15 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON());
 };
 
+const validUser = () => {
+  const user = {
+    username: 'testingUser',
+    password: process.env.TEST_USERSPASS
+  };
+
+  return user;
+};
+
 module.exports = {
-  initialNotes, nonExistingId, notesInDb, usersInDb
+  initialNotes, nonExistingId, notesInDb, usersInDb, validUser
 };

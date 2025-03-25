@@ -68,7 +68,13 @@ describe('when there is initially some notes saved', () => {
         important: true
       };
 
+      const loginResponse = await api.post('/api/login')
+        .send(helper.validUser())
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
       await api.post('/api/notes')
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(newNote)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -80,10 +86,16 @@ describe('when there is initially some notes saved', () => {
       assert(contents.includes('async/await simplifies making async calls'));
     });
 
-    test('fails with status code 404 if data is not valid', async () => {
+    test('fails with status code 400 if data is not valid', async () => {
       const newNote = { important: true };
 
+      const loginResponse = await api.post('/api/login')
+        .send(helper.validUser())
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
       await api.post('/api/notes')
+        .set('Authorization', `Bearer ${loginResponse.body.token}`)
         .send(newNote)
         .expect(400);
 
