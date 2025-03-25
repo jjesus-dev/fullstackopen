@@ -25,6 +25,16 @@ const App = () => {
   };
   useEffect(hook, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser');
+
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      noteService.setToken(user.token);
+    }
+  }, []);
+
   const addNote = (event) => {
     event.preventDefault();
     const noteObject = {
@@ -56,6 +66,7 @@ const App = () => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote));
       })
       .catch(error => {
+        console.log(error.message);
         setErrorMessage(`Note '${note.content}' was already removed from server`);
         setTimeout(() => {
           setErrorMessage(null);
@@ -71,6 +82,10 @@ const App = () => {
       const user = await loginService.login({
         username, password
       });
+
+      window.localStorage.setItem(
+        'loggedNoteAppUser', JSON.stringify(user)
+      );
       noteService.setToken(user.token);
       setUser(user);
       setUsername('');
