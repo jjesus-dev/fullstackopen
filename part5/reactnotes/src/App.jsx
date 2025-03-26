@@ -7,6 +7,7 @@ import noteService from "./services/notes";
 import loginService from "./services/login";
 
 import './index.css';
+import LoginForm from "./components/LoginForm";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -16,6 +17,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const [loginVisible, setLoginVisible] = useState(false);
 
   const hook = () => {
     noteService.getAll()
@@ -90,33 +92,39 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
+      
+      console.log('logging in with', username);
     } catch (exception) {
       setErrorMessage(`Wrong credentials - ${exception.message}`)
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000);
     }
-    console.log('logging in with', username);
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username <input type="text"
-        value={username}
-        name="Username"
-        onChange={({ target }) => setUsername(target.value)} />
-      </div>
-      <div>
-        password <input type="password"
-        value={password}
-        name="Password"
-        onChange={({ target }) => setPassword(target.value)} />
-      </div>
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' };
+    const showWhenVisible = { display: loginVisible ? '' : 'none' };
 
-      <button type="submit">Login</button>
-    </form>
-  )
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>Login</button>
+        </div>
+
+        <div style={showWhenVisible}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin} />
+
+          <button onClick={() => setLoginVisible(false)}>Cancel</button>
+        </div>
+      </div>
+    )
+  }
 
   const noteForm = () => (
     <form onSubmit={addNote}>
