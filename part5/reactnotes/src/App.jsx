@@ -8,6 +8,8 @@ import loginService from "./services/login";
 
 import './index.css';
 import LoginForm from "./components/LoginForm";
+import NoteForm from "./components/NoteForm";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -126,15 +128,6 @@ const App = () => {
     )
   }
 
-  const noteForm = () => (
-    <form onSubmit={addNote}>
-      <input type="text" 
-        value={newNote}
-        onChange={handleNoteChange} />
-      <button type="submit">Save</button>
-    </form>
-  )
-
   return (
     <>
       <div>
@@ -145,7 +138,12 @@ const App = () => {
           loginForm() :
           <div>
             <p>{user.name} logged-in</p>
-            {noteForm()}
+            <Togglable buttonLabel='New note'>
+              <NoteForm onSubmit={addNote}
+                value={newNote}
+                handleChange={handleNoteChange}
+              />
+            </Togglable>
           </div>
         }
         <br />
