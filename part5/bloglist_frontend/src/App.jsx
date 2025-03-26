@@ -3,9 +3,17 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const notificationStyle = {
+  backgroundColor: "#ddccdd",
+  border: "solid 2px",
+  padding: "4px",
+  marging: "auto",
+  textAlign: "center"
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null)
@@ -46,10 +54,15 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      setErrorMessage(`Wrong credentials - ${exception.message}`)
+
+      setNotification(`${user.name} successfully logged in`)
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
+      }, 5000);
+    } catch (exception) {
+      setNotification(`Wrong credentials - ${exception.message}`)
+      setTimeout(() => {
+        setNotification(null)
       }, 5000);
     }
   }
@@ -62,10 +75,15 @@ const App = () => {
 
       blogService.setToken(null)
       setUser(null)
-    } catch (exception) {
-      setErrorMessage(`Error while logging out - ${exception.message}`)
+
+      setNotification(`User successfully logged out`)
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
+      }, 5000);
+    } catch (exception) {
+      setNotification(`Error while logging out - ${exception.message}`)
+      setTimeout(() => {
+        setNotification(null)
       }, 5000);
     }
   }
@@ -84,13 +102,32 @@ const App = () => {
       setBlogTitle('')
       setBlogAuthor('')
       setBlogUrl('')
+
+      setNotification(`${user.name} added a new entry: ${newBlog.title}`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000);
+    }).catch(error => {
+      setNotification(`Error creating a new blog: ${error.message}`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000);
     })
   }
+
+  const notificationMsg = () => (
+    <div>
+      <p style={notificationStyle}>{notification}</p>
+    </div>
+  )
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
+
+        {notification !== null && notificationMsg()}
+
         <form onSubmit={handleLogin}>
           <div>
             <label htmlFor='txtUsername'>Username:</label>
@@ -109,7 +146,6 @@ const App = () => {
         </form>
       </div>
     )
-    
   }
 
   return (
@@ -120,6 +156,8 @@ const App = () => {
           <button type='submit' name='btnLogout'>Logout</button>
         </div>
       </form>
+
+      {notification !== null && notificationMsg()}
 
       <h2>Create a new blog entry</h2>
       <form onSubmit={addBlog}>
