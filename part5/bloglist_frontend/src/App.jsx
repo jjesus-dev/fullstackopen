@@ -16,19 +16,47 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const loggedUserInfo = window.localStorage.getItem('loggedUser')
+
+    if (loggedUserInfo) {
+      const user = JSON.parse(loggedUserInfo)
+      setUser(user)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     
     try {
       const user = await loginService.login({
         username, password
       })
 
+      window.localStorage.setItem(
+        'loggedUser', JSON.stringify(user)
+      )
+
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage(`Wrong credential - ${exception.message}`)
+      setErrorMessage(`Wrong credentials - ${exception.message}`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000);
+    }
+  }
+
+  const handleLogout = async (event) => {
+    event.preventDefault()
+
+    try {
+      window.localStorage.removeItem('loggedUser')
+
+      setUser(null)
+    } catch (exception) {
+      setErrorMessage(`Error while logging out - ${exception.message}`)
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000);
@@ -62,9 +90,12 @@ const App = () => {
 
   return (
     <div>
-      <div>
-        <p>{user.name} logged in</p>
-      </div>
+      <form onSubmit={handleLogout}>
+        <div>
+          <p>{user.name} logged in</p>
+          <button type='submit' name='btnLogout'>Logout</button>
+        </div>
+      </form>
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
