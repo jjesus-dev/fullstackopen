@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -17,9 +19,8 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null)
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
+  
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -88,31 +89,21 @@ const App = () => {
     }
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-
-    const newBlog = {
-      title: blogTitle,
-      author: blogAuthor,
-      url: blogUrl
-    }
-
-    blogService.create(newBlog).then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog))
-      setBlogTitle('')
-      setBlogAuthor('')
-      setBlogUrl('')
-
-      setNotification(`${user.name} added a new entry: ${newBlog.title}`)
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000);
-    }).catch(error => {
-      setNotification(`Error creating a new blog: ${error.message}`)
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000);
-    })
+  const addBlog = async (newBlog) => {
+    blogFormRef.current.toggleVisibility();
+    blogService.create(newBlog)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setNotification(`${user.name} added a new entry: ${newBlog.title}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
+      }).catch(error => {
+        setNotification(`Error creating a new blog: ${error.message}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
+      })
   }
 
   const notificationMsg = () => (
@@ -159,27 +150,9 @@ const App = () => {
 
       {notification !== null && notificationMsg()}
 
-      <h2>Create a new blog entry</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          <label htmlFor='txtTitle'>Title:</label>
-          <input type='text' id='txtTitle'
-            value={blogTitle} onChange={({ target }) => setBlogTitle(target.value)} />
-        </div>
-        <div>
-          <label htmlFor='txtAuthor'>Author:</label>
-          <input type='text' id='txtAuthor'
-            value={blogAuthor} onChange={({ target }) => setBlogAuthor(target.value)} />
-        </div>
-        <div>
-          <label htmlFor='txtUrl'>Url:</label>
-          <input type='text' id='txtUrl'
-            value={blogUrl} onChange={({ target }) => setBlogUrl(target.value)} />
-        </div>
-        <br />
-
-        <button type='submit' name='btnAddBlog'>Create</button>
-      </form>
+      <Togglable buttonLabel={'Create new blog'} ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} />
+      </Togglable>
 
       <br />
 
