@@ -106,6 +106,30 @@ const App = () => {
       })
   }
 
+  const updateBlog = async (blogId, blog) => {
+    blogService.update(blogId, blog)
+      .then(returnedBlog => {
+        const updatedBlogs = blogs.map(blog => {
+          if (blog.id === returnedBlog.id) {
+            return returnedBlog;
+          } else {
+            return blog;
+          }
+        });
+
+        setBlogs(updatedBlogs);
+        setNotification(`${user.name} liked an entry - ${returnedBlog.title}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
+      }).catch(error => {
+        setNotification(`Error liking a blog: ${error.message}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
+      })
+  }
+
   const notificationMsg = () => (
     <div>
       <p style={notificationStyle}>{notification}</p>
@@ -158,7 +182,8 @@ const App = () => {
 
       <h2>blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog}
+          updateBlog={updateBlog} />
       )}
     </div>
   )

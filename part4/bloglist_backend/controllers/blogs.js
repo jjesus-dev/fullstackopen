@@ -50,16 +50,25 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 });
 
 blogsRouter.put('/:id', async (request, response) => {
-  const body = request.body;
-  const blog = {
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes
-  };
+  const requestedBlog = await Blog.findById(request.params.id);
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true });
-  response.status(200).json(updatedBlog);
+  if (requestedBlog) {
+    const body = request.body;
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+      user: body.user
+    };
+
+    const updatedBlog = await Blog
+      .findByIdAndUpdate(request.params.id, blog, { new: true });
+    response.status(200).json(updatedBlog);
+  } else {
+    response.status(404).json({ error: 'Blog not found' });
+  }
 });
 
 module.exports = blogsRouter;
