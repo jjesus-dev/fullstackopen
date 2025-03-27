@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 import Note from "./components/Note";
 import Notification from "./components/Notification";
@@ -13,13 +13,13 @@ import Togglable from "./components/Togglable";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState('a new note...');
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [loginVisible, setLoginVisible] = useState(false);
+  const noteFormRef = useRef()
 
   const hook = () => {
     noteService.getAll()
@@ -40,14 +40,11 @@ const App = () => {
   }, []);
 
   const addNote = (noteObject) => {
-   noteService.create(noteObject)
+    noteFormRef.current.toggleVisibility()
+    noteService.create(noteObject)
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote));
       })
-  }
-
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value);
   }
 
   const notesToShow = showAll 
@@ -87,8 +84,6 @@ const App = () => {
       setUser(user);
       setUsername('');
       setPassword('');
-      
-      console.log('logging in with', username);
     } catch (exception) {
       setErrorMessage(`Wrong credentials - ${exception.message}`)
       setTimeout(() => {
@@ -121,6 +116,12 @@ const App = () => {
     )
   }
 
+  const noteForm = () => (
+    <Togglable buttonLabel='New note' ref={noteFormRef}>
+      <NoteForm createNote={addNote} />
+    </Togglable>
+  )
+
   return (
     <>
       <div>
@@ -131,12 +132,7 @@ const App = () => {
           loginForm() :
           <div>
             <p>{user.name} logged-in</p>
-            <Togglable buttonLabel='New note'>
-              <NoteForm onSubmit={addNote}
-                value={newNote}
-                handleChange={handleNoteChange}
-              />
-            </Togglable>
+            {noteForm()}
           </div>
         }
         <br />
