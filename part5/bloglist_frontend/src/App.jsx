@@ -136,6 +136,26 @@ const App = () => {
       })
   }
 
+  const deleteBlog = async (blogToRemove) => {
+    const confirmation = window.confirm(`Remove '${blogToRemove.title}'?`);
+
+    if (confirmation) {
+      blogService.deleteBlog(blogToRemove.id)
+        .then(deletedBlog => {
+          setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+          setNotification(`${user.name} has removed an entry - ${blogToRemove.title}`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000);
+        }).catch(error => {
+          setNotification(`Error removing a blog: ${error.message}`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000);
+        })
+    }
+  }
+
   const notificationMsg = () => (
     <div>
       <p style={notificationStyle}>{notification}</p>
@@ -189,7 +209,8 @@ const App = () => {
       <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog}
-          updateBlog={updateBlog} />
+          loggedUsername={user.username}
+          updateBlog={updateBlog} deleteBlog={deleteBlog} />
       )}
     </div>
   )
