@@ -31,7 +31,7 @@ export default [
         { allowConstantExport: true },
       ],
       'eqeqeq': 'error',
-      'no-console': 'off',
+      'no-console': 'error',
       '@stylistic/js/indent': ['error', 2],
       '@stylistic/js/linebreak-style': ['error', 'unix'],
       '@stylistic/js/quotes': ['error', 'single'],
