@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 const Blog = ({ blog, loggedUsername, updateBlog, deleteBlog }) => {
   const [infoVisibility, setInfoVisibility] = useState(false);
@@ -25,7 +25,7 @@ const Blog = ({ blog, loggedUsername, updateBlog, deleteBlog }) => {
         &nbsp;<button onClick={addLikes}>like</button></p>
       <p>Author: {blog.author}</p>
 
-      {loggedUsername && 
+      {loggedUsername &&
         loggedUsername === blog.user.username
         ? <button onClick={removeBlog}>Remove</button>
         : <br />
@@ -49,20 +49,20 @@ const Blog = ({ blog, loggedUsername, updateBlog, deleteBlog }) => {
     event.preventDefault();
 
     deleteBlog(blog);
-  }
+  };
 
   return (
     <div style={blogStyle}>
       <p style={titleStyle}>
         {blog.title} &nbsp;
-      <button onClick={() => toggleVisibility()}>
-        {infoVisibility ? 'Hide' : 'View'}
-      </button>
+        <button onClick={() => toggleVisibility()}>
+          {infoVisibility ? 'Hide' : 'View'}
+        </button>
       </p>
 
-      {infoVisibility && blogInformation()} 
+      {infoVisibility && blogInformation()}
     </div>
   );
-}
+};
 
 export default Blog;

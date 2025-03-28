@@ -1,116 +1,116 @@
-import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
-import Togglable from './components/Togglable'
-import BlogForm from './components/BlogForm'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import { useState, useEffect, useRef } from 'react';
+import Blog from './components/Blog';
+import Togglable from './components/Togglable';
+import BlogForm from './components/BlogForm';
+import blogService from './services/blogs';
+import loginService from './services/login';
 
 const notificationStyle = {
-  backgroundColor: "#ddccdd",
-  border: "solid 2px",
-  padding: "4px",
-  marging: "auto",
-  textAlign: "center"
-}
+  backgroundColor: '#ddccdd',
+  border: 'solid 2px',
+  padding: '4px',
+  marging: 'auto',
+  textAlign: 'center'
+};
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogs] = useState([]);
   const [notification, setNotification] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null)
-  
+  const [user, setUser] = useState(null);
+
   const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
       const sortedBlogs = blogs.sort((a, b) => {
         if (a.likes > b.likes) {
-          return -1
+          return -1;
         }
-      })
+      });
 
-      setBlogs(sortedBlogs)
-    })  
-  }, [])
+      setBlogs(sortedBlogs);
+    });
+  }, []);
 
   useEffect(() => {
-    const loggedUserInfo = window.localStorage.getItem('loggedUser')
+    const loggedUserInfo = window.localStorage.getItem('loggedUser');
 
     if (loggedUserInfo) {
-      const user = JSON.parse(loggedUserInfo)
-      
-      blogService.setToken(user.token)
-      setUser(user)
+      const user = JSON.parse(loggedUserInfo);
+
+      blogService.setToken(user.token);
+      setUser(user);
     }
-  }, [])
+  }, []);
 
   const handleLogin = async (event) => {
-    event.preventDefault()
-    
+    event.preventDefault();
+
     try {
       const user = await loginService.login({
         username, password
-      })
+      });
 
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
-      )
+      );
 
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      blogService.setToken(user.token);
+      setUser(user);
+      setUsername('');
+      setPassword('');
 
-      setNotification(`${user.name} successfully logged in`)
+      setNotification(`${user.name} successfully logged in`);
       setTimeout(() => {
-        setNotification(null)
+        setNotification(null);
       }, 5000);
     } catch (exception) {
-      setNotification(`Wrong credentials - ${exception.message}`)
+      setNotification(`Wrong credentials - ${exception.message}`);
       setTimeout(() => {
-        setNotification(null)
+        setNotification(null);
       }, 5000);
     }
-  }
+  };
 
   const handleLogout = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     try {
-      window.localStorage.removeItem('loggedUser')
+      window.localStorage.removeItem('loggedUser');
 
-      blogService.setToken(null)
-      setUser(null)
+      blogService.setToken(null);
+      setUser(null);
 
-      setNotification(`User successfully logged out`)
+      setNotification('User successfully logged out');
       setTimeout(() => {
-        setNotification(null)
+        setNotification(null);
       }, 5000);
     } catch (exception) {
-      setNotification(`Error while logging out - ${exception.message}`)
+      setNotification(`Error while logging out - ${exception.message}`);
       setTimeout(() => {
-        setNotification(null)
+        setNotification(null);
       }, 5000);
     }
-  }
+  };
 
   const addBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(newBlog)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setNotification(`${user.name} added a new entry: ${newBlog.title}`)
+        setBlogs(blogs.concat(returnedBlog));
+        setNotification(`${user.name} added a new entry: ${newBlog.title}`);
         setTimeout(() => {
-          setNotification(null)
+          setNotification(null);
         }, 5000);
       }).catch(error => {
-        setNotification(`Error creating a new blog: ${error.message}`)
+        setNotification(`Error creating a new blog: ${error.message}`);
         setTimeout(() => {
-          setNotification(null)
+          setNotification(null);
         }, 5000);
-      })
-  }
+      });
+  };
 
   const updateBlog = async (blogId, blog) => {
     blogService.update(blogId, blog)
@@ -124,17 +124,17 @@ const App = () => {
         });
 
         setBlogs(updatedBlogs);
-        setNotification(`${user.name} liked an entry - ${returnedBlog.title}`)
+        setNotification(`${user.name} liked an entry - ${returnedBlog.title}`);
         setTimeout(() => {
-          setNotification(null)
+          setNotification(null);
         }, 5000);
       }).catch(error => {
-        setNotification(`Error liking a blog: ${error.message}`)
+        setNotification(`Error liking a blog: ${error.message}`);
         setTimeout(() => {
-          setNotification(null)
+          setNotification(null);
         }, 5000);
-      })
-  }
+      });
+  };
 
   const deleteBlog = async (blogToRemove) => {
     const confirmation = window.confirm(`Remove '${blogToRemove.title}'?`);
@@ -142,25 +142,25 @@ const App = () => {
     if (confirmation) {
       blogService.deleteBlog(blogToRemove.id)
         .then(deletedBlog => {
-          setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
-          setNotification(`${user.name} has removed an entry - ${blogToRemove.title}`)
+          setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id));
+          setNotification(`${user.name} has removed an entry - ${blogToRemove.title}`);
           setTimeout(() => {
-            setNotification(null)
+            setNotification(null);
           }, 5000);
         }).catch(error => {
-          setNotification(`Error removing a blog: ${error.message}`)
+          setNotification(`Error removing a blog: ${error.message}`);
           setTimeout(() => {
-            setNotification(null)
+            setNotification(null);
           }, 5000);
-        })
+        });
     }
-  }
+  };
 
   const notificationMsg = () => (
     <div>
       <p style={notificationStyle}>{notification}</p>
     </div>
-  )
+  );
 
   if (user === null) {
     return (
@@ -186,7 +186,7 @@ const App = () => {
           </button>
         </form>
       </div>
-    )
+    );
   }
 
   return (
@@ -213,7 +213,7 @@ const App = () => {
           updateBlog={updateBlog} deleteBlog={deleteBlog} />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
