@@ -20,7 +20,8 @@ export default [
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      '@stylistic/js': stylisticJs
+      '@stylistic/js': stylisticJs,
+      'vitest-globals/env': true
     },
     rules: {
       ...js.configs.recommended.rules,
