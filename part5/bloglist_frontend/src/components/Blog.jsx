@@ -24,8 +24,7 @@ const Blog = ({ blog, loggedUsername, updateBlog, deleteBlog }) => {
       <p>Url: {blog.url}</p>
       <p>Likes: {blog.likes}
         &nbsp;<button onClick={addLikes}>like</button></p>
-      <p>Author: {blog.author}</p>
-
+      
       {loggedUsername &&
         loggedUsername === blog.user.username
         ? <button onClick={removeBlog}>Remove</button>
@@ -53,9 +52,12 @@ const Blog = ({ blog, loggedUsername, updateBlog, deleteBlog }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <p style={titleStyle}>
-        {blog.title} &nbsp;
+        {blog.title}
+      </p>
+      <p>
+        Author: {blog.author} &nbsp;
         <button onClick={() => toggleVisibility()}>
           {infoVisibility ? 'Hide' : 'View'}
         </button>
