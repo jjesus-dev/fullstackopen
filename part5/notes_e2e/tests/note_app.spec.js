@@ -1,18 +1,18 @@
-import { test, describe, expect } from "@playwright/test";
+import { test, describe, expect, beforeEach } from "@playwright/test";
 import "dotenv/config";
 
 describe('Note app', () => {
-  test('front page can be opened', async ({ page }) => {
+  beforeEach(async ({ page }) => {
     await page.goto('http://localhost:5173')
-    
+  })
+
+  test('front page can be opened', async ({ page }) => {
     const locator = await page.getByText('Notes')
     await expect(locator).toBeVisible()
     await expect(page.getByText('Note app, Department of Computer Science, University of Helsinki 2024')).toBeVisible()
   })
 
   test('login form can be opened', async ({ page }) => {
-    await page.goto('http://localhost:5173')
-
     await page.getByRole('button', { name: 'Login' }).click()
     await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
     await page.getByTestId('txtPassword').fill(process.env.TESTS_USERPASS)
