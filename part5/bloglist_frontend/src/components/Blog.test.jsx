@@ -46,8 +46,6 @@ describe('<Blog />', () => {
 
     const likeButton = screen.getByText('like');
     await user.click(likeButton);
-    
-    const div = container.querySelector('.blog');
     expect(mockHandler.mock.calls).toHaveLength(1);
 
     await user.click(likeButton);
