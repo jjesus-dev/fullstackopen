@@ -2,7 +2,16 @@ import { test, describe, expect, beforeEach } from "@playwright/test";
 import "dotenv/config";
 
 describe('Note app', () => {
-  beforeEach(async ({ page }) => {
+  beforeEach(async ({ page, request }) => {
+    await request.post(`${process.env.TESTS_BACKENDURL}/testing/reset`)
+    await request.post(`${process.env.TESTS_BACKENDURL}/users`, {
+      data: {
+        name: 'Testing User',
+        username: process.env.TESTS_USERNAME,
+        password: process.env.TESTS_USERPASS,
+      }
+    })
+    
     await page.goto(process.env.TESTS_BASEURL)
   })
 
@@ -35,6 +44,19 @@ describe('Note app', () => {
       await page.getByRole('button', { name: 'Save' }).click()
 
       await expect(page.getByText('A new note created using Playwright')).toBeVisible()
+    })
+
+    describe('and a note exists', () => {
+      beforeEach(async ({ page }) => {
+        await page.getByRole('button', { name: 'New note' }).click()
+        await page.getByRole('textbox').fill('Another note using Playwright')
+        await page.getByRole('button', { name: 'Save' }).click()
+      })
+
+      test('importance can be changed', async ({ page }) => {
+        await page.getByRole('button', { name: 'make not important' }).click()
+        await expect(page.getByText('make important')).toBeVisible()
+      })
     })
   })
 })
