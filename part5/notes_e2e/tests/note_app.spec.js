@@ -66,6 +66,11 @@ describe('Note app', () => {
     await page.getByTestId('txtPassword').fill('wrongPa')
     await page.getByRole('button', { name: 'Login' }).click()
 
-    await expect(page.getByText('Wrong credentials')).toBeVisible()
+    const errorDiv = await page.locator('.error')
+    await expect(errorDiv).toContainText('Wrong credentials')
+    await expect(errorDiv).toHaveCSS('border-style', 'solid')
+    await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
+    
+    await expect(page.getByText('Testing User logged-in')).not.toBeVisible()
   })
 })
