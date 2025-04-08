@@ -172,12 +172,12 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             <label htmlFor='txtUsername'>Username:</label>
-            <input type='text' id='txtUsername'
+            <input type='text' id='txtUsername' data-testid='txtUsername'
               value={username} onChange={({ target }) => setUsername(target.value)} />
           </div>
           <div>
             <label htmlFor='txtPassword'>Password:</label>
-            <input type='password' id='txtPassword'
+            <input type='password' id='txtPassword' data-testid='txtPassword'
               value={password} onChange={({ target }) => setPassword(target.value)} />
           </div>
 

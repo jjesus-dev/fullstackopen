@@ -26,19 +26,19 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={addBlog}>
         <div>
           <label htmlFor='txtTitle'>Title:</label>
-          <input type='text' id='txtTitle'
+          <input type='text' id='txtTitle' data-testid='txtTitle'
             value={blogTitle}
             onChange={event => setBlogTitle(event.target.value)} />
         </div>
         <div>
           <label htmlFor='txtAuthor'>Author:</label>
-          <input type='text' id='txtAuthor'
+          <input type='text' id='txtAuthor' data-testid='txtAuthor'
             value={blogAuthor}
             onChange={event => setBlogAuthor(event.target.value)} />
         </div>
         <div>
           <label htmlFor='txtUrl'>Url:</label>
-          <input type='text' id='txtUrl'
+          <input type='text' id='txtUrl' data-testid='txtUrl'
             value={blogUrl}
             onChange={event => setBlogUrl(event.target.value)} />
         </div>
