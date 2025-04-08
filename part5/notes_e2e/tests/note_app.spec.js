@@ -59,4 +59,13 @@ describe('Note app', () => {
       })
     })
   })
+
+  test('login fails with wrong password', async ({ page }) => {
+    await page.getByRole('button', { name: 'Login' }).click()
+    await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
+    await page.getByTestId('txtPassword').fill('wrongPa')
+    await page.getByRole('button', { name: 'Login' }).click()
+
+    await expect(page.getByText('Wrong credentials')).toBeVisible()
+  })
 })
