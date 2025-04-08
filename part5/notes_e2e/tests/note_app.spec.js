@@ -1,10 +1,11 @@
 import { test, describe, expect, beforeEach } from "@playwright/test";
 import "dotenv/config";
+import { createNote, loginWith } from "./helper";
 
 describe('Note app', () => {
   beforeEach(async ({ page, request }) => {
-    await request.post(`${process.env.TESTS_BACKENDURL}/testing/reset`)
-    await request.post(`${process.env.TESTS_BACKENDURL}/users`, {
+    await request.post(`/api/testing/reset`)
+    await request.post(`/api/users`, {
       data: {
         name: 'Testing User',
         username: process.env.TESTS_USERNAME,
@@ -12,7 +13,7 @@ describe('Note app', () => {
       }
     })
     
-    await page.goto(process.env.TESTS_BASEURL)
+    await page.goto('/')
   })
 
   test('front page can be opened', async ({ page }) => {
@@ -22,35 +23,25 @@ describe('Note app', () => {
   })
 
   test('user can log in', async ({ page }) => {
-    await page.getByRole('button', { name: 'Login' }).click()
-    await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
-    await page.getByTestId('txtPassword').fill(process.env.TESTS_USERPASS)
-    await page.getByRole('button', { name: 'Login' }).click()
+    await loginWith(page, process.env.TESTS_USERNAME, process.env.TESTS_USERPASS)
 
     await expect(page.getByText('Testing User logged-in')).toBeVisible()
   })
 
   describe('when logged in', () => {
     beforeEach(async ({ page }) => {
-      await page.getByRole('button', { name: 'Login' }).click()
-      await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
-      await page.getByTestId('txtPassword').fill(process.env.TESTS_USERPASS)
-      await page.getByRole('button', { name: 'Login' }).click()
+      await loginWith(page, process.env.TESTS_USERNAME, process.env.TESTS_USERPASS)
     })
 
     test('a new note can be created', async ({ page }) => {
-      await page.getByRole('button', { name: 'New note' }).click()
-      await page.getByRole('textbox').fill('A new note created using Playwright')
-      await page.getByRole('button', { name: 'Save' }).click()
+      await createNote(page, 'A new note created using Playwright')
 
       await expect(page.getByText('A new note created using Playwright')).toBeVisible()
     })
 
     describe('and a note exists', () => {
       beforeEach(async ({ page }) => {
-        await page.getByRole('button', { name: 'New note' }).click()
-        await page.getByRole('textbox').fill('Another note using Playwright')
-        await page.getByRole('button', { name: 'Save' }).click()
+        await createNote(page, 'Another note using Playwright')
       })
 
       test('importance can be changed', async ({ page }) => {
@@ -61,10 +52,7 @@ describe('Note app', () => {
   })
 
   test('login fails with wrong password', async ({ page }) => {
-    await page.getByRole('button', { name: 'Login' }).click()
-    await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
-    await page.getByTestId('txtPassword').fill('wrongPa')
-    await page.getByRole('button', { name: 'Login' }).click()
+    await loginWith(page, process.env.TESTS_USERNAME, 'wrongPa')
 
     const errorDiv = await page.locator('.error')
     await expect(errorDiv).toContainText('Wrong credentials')
