@@ -54,5 +54,26 @@ describe('Blog app', () => {
 
       await expect(page.getByText('Testing User added a new entry:')).toBeVisible()
     })
+
+    test('a blog entry receives a like', async ({ page }) => {
+      await page.getByRole('button', { name: 'Create new blog' }).click()
+
+      await page.getByTestId('txtTitle').fill('How to test frontend apps?')
+      await page.getByTestId('txtAuthor').fill('John Doe')
+      await page.getByTestId('txtUrl').fill('http://example.com/testingReact')
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      await expect(page.getByText('Testing User added a new entry:')).toBeVisible()
+
+      await page.getByRole('button', { name: 'View' }).click()
+
+      const likeButton = await page.getByRole('button', { name: 'like' })
+      const likeElement = await likeButton.locator('..')
+
+      await likeButton.click()
+      
+      await expect(likeElement).toContainText('Likes: 1')
+      await expect(page.getByText('Testing User liked an entry')).toBeVisible()
+    })
   })
 })
