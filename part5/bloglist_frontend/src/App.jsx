@@ -24,13 +24,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-      const sortedBlogs = blogs.sort((a, b) => {
-        if (a.likes > b.likes) {
-          return -1;
-        }
-      });
-
-      setBlogs(sortedBlogs);
+      setBlogs(sortLikes(blogs));
     });
   }, []);
 
@@ -99,7 +93,14 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
     blogService.create(newBlog)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog));
+        const blogOwner = {
+          user: {
+            id: returnedBlog.user,
+            username: user.username,
+            name: user.name
+          }
+        };
+        setBlogs(blogs.concat({ ...returnedBlog, ...blogOwner }));
         setNotification(`${user.name} added a new entry: ${newBlog.title}`);
         setTimeout(() => {
           setNotification(null);
@@ -123,7 +124,7 @@ const App = () => {
           }
         });
 
-        setBlogs(updatedBlogs);
+        setBlogs(sortLikes(updatedBlogs));
         setNotification(`${user.name} liked an entry - ${returnedBlog.title}`);
         setTimeout(() => {
           setNotification(null);
@@ -161,6 +162,16 @@ const App = () => {
       <p style={notificationStyle}>{notification}</p>
     </div>
   );
+
+  const sortLikes = (blogs) => {
+    const sortedBlogs = blogs.sort((a, b) => {
+      if (a.likes > b.likes) {
+        return -1;
+      }
+    });
+
+    return sortedBlogs;
+  }
 
   if (user === null) {
     return (
