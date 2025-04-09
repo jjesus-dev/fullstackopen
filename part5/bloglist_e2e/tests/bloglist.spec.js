@@ -36,4 +36,23 @@ describe('Blog app', () => {
       await expect(page.getByText('Wrong credentials')).toBeVisible()
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page, request }) => {
+      await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
+      await page.getByTestId('txtPassword').fill(process.env.TESTS_PASSWORD)
+      await page.getByRole('button', { name: 'Login' }).click()
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await page.getByRole('button', { name: 'Create new blog' }).click()
+
+      await page.getByTestId('txtTitle').fill('How to test frontend apps?')
+      await page.getByTestId('txtAuthor').fill('John Doe')
+      await page.getByTestId('txtUrl').fill('http://example.com/testingReact')
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      await expect(page.getByText('Testing User added a new entry:')).toBeVisible()
+    })
+  })
 })
