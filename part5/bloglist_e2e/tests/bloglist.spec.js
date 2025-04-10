@@ -157,4 +157,47 @@ describe('Blog app', () => {
       await expect(removeButton).not.toBeVisible()
     })
   })
+
+  describe('After blogs are liked', () => {
+    beforeEach(async ({ page }, testInfo) => {
+      testInfo.setTimeout(testInfo.timeout + 6_000)
+
+      await page.getByTestId('txtUsername').fill(process.env.TESTS_USERNAME)
+      await page.getByTestId('txtPassword').fill(process.env.TESTS_PASSWORD)
+      await page.getByRole('button', { name: 'Login' }).click()
+
+      await expect(page.getByText('Testing User successfully logged in')).toBeVisible()
+
+      for (let index = 0; index < blogs.length; index++) {
+        await page.getByRole('button', { name: 'Create new blog' }).click()
+        await page.getByTestId('txtTitle').fill(blogs[index].title)
+        await page.getByTestId('txtAuthor').fill(blogs[index].author)
+        await page.getByTestId('txtUrl').fill(blogs[index].url)
+        await page.getByRole('button', { name: 'Create' }).click()
+
+        await page.getByText(`added a new entry: ${blogs[index].title}`).waitFor()
+      }
+    })
+
+    test('items are sorted by likes (top to bottom)', async ({ page }) => {
+      for (let index = 0; index < blogs.length; index++) {
+        const blogLocator = await page.locator('.blog')
+          .filter({ has: page.getByText(blogs[index].title, { exact: true })})
+        blogLocator.getByRole('button', { name: 'View' }).click()
+
+        for (let j = 0; j < (index + 2); j++) {
+          await blogLocator.getByRole('button', { name: 'like' }).click()
+          await blogLocator.getByText(`Likes: ${j}`).waitFor()
+        }
+      }
+
+      const firstBlog = await page.locator('.blog')
+        .nth(0).locator('..').getByText('Likes: 3')
+      expect(firstBlog).toBeVisible()
+
+      const LastBlog = await page.locator('.blog')
+        .last().locator('..').getByText('Likes: 1')
+      expect(LastBlog).toBeVisible()
+    })
+  })
 })
