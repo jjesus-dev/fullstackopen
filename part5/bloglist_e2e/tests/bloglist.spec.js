@@ -125,5 +125,18 @@ describe('Blog app', () => {
       await expect(page.getByText('Testing User has removed an entry')).toBeVisible()
     })
 
+    test(`a blog can't be deleted by a different user`, async ({ page }) => {
+      await page.getByTestId('txtUsername').fill(otherUsername)
+      await page.getByTestId('txtPassword').fill(otherPassword)
+      await page.getByRole('button', { name: 'Login' }).click()
+      
+      await expect(page.getByText('Testing User #2 successfully logged in')).toBeVisible()
+
+      await page.getByText('How to test frontend apps?').waitFor()
+      await page.getByRole('button', { name: 'View' }).click()
+      const removeButton = await page.getByRole('button', { name: 'Remove' })
+      
+      await expect(removeButton).not.toBeVisible()
+    })
   })
 })
