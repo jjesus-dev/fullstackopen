@@ -15,6 +15,7 @@ export default [
         ecmaFeatures: { jsx: true },
         sourceType: 'module',
       },
+      "jest/globals": true,
     },
     plugins: {
       'react-hooks': reactHooks,
