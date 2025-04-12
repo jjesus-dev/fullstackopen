@@ -10,7 +10,6 @@ describe('Unicafe reducer', () => {
   }
 
   test('should return a proper initial state when call with undefined state', () => {
-    const state = {}
     const action = {
       type: 'DO_NOTHING'
     }
@@ -31,6 +30,36 @@ describe('Unicafe reducer', () => {
       good: 1,
       ok: 0,
       bad: 0
+    })
+  })
+
+  test('ok is incremented', () => {
+    const state = initialState
+    const action = {
+      type: 'OK'
+    }
+
+    deepFreeze(state)
+    const newState = counterReducer(state, action)
+    expect(newState).toEqual({
+      good: 0,
+      ok: 1,
+      bad: 0
+    })
+  })
+
+  test('bad is incremented', () => {
+    const state = initialState
+    const action = {
+      type: 'BAD'
+    }
+
+    deepFreeze(state)
+    const newState = counterReducer(state, action)
+    expect(newState).toEqual({
+      good: 0,
+      ok: 0,
+      bad: 1
     })
   })
 })
