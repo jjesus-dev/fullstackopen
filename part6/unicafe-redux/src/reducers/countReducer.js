@@ -5,8 +5,6 @@ const initialState = {
 }
 
 const counterReducer = (state = initialState, action) => {
-  console.log(action);
-
   let newState = Object.assign({}, state)
 
   switch (action.type) {

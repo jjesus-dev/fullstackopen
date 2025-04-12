@@ -6,21 +6,41 @@ import counterReducer from './reducers/countReducer'
 const store = createStore(counterReducer)
 
 const App = () => {
-  const good = () => {
-    store.dispatch({
-      type: 'GOOD'
-    })
+  const count = (action) => {
+    switch (action) {
+      case 'GOOD':
+        store.dispatch({
+          type: action
+        })
+        break;
+      case 'BAD':
+        store.dispatch({
+          type: action
+        })
+        break;
+      case 'OK':
+        store.dispatch({
+          type: action
+        })
+        break;
+      default:
+        store.dispatch({
+          type: 'ZERO'
+        })
+        break;
+    }
+    
   }
 
   return (
     <div>
-      <button onClick={good}>Good</button>
-      <button>Ok</button>
-      <button>Bad</button>
-      <button>Reset stats</button>
+      <button onClick={() => count('GOOD')}>Good</button>
+      <button onClick={() => count('OK')}>Ok</button>
+      <button onClick={() => count('BAD')}>Bad</button>
+      <button onClick={() => count('RESET')}>Reset stats</button>
       <div>Good {store.getState().good}</div>
-      <div>Ok</div>
-      <div>Bad</div>
+      <div>Ok {store.getState().ok}</div>
+      <div>Bad {store.getState().bad}</div>
     </div>
   )
 }
