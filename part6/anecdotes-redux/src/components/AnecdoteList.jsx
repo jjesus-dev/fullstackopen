@@ -7,7 +7,6 @@ const AnecdoteList = () => {
   const filter = useSelector(state => state.filter)
   
   const vote = (id) => {
-    console.log('vote', id);
     dispatch(voteAnecdote(id))
   }
 
