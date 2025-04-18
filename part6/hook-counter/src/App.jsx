@@ -1,18 +1,28 @@
-import { useState } from 'react'
+import { useReducer } from 'react'
+
+const counterReducer = (state, action) => {
+  switch (action.type) {
+    case 'INC':
+      return state + 1
+    case 'DEC':
+      return state - 1
+    case 'ZERO':
+      return 0
+    default:
+      return state
+  }
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [counter, counterDispatch] = useReducer(counterReducer, 0)
 
   return (
     <>
-      <h1>Vite + React</h1>
+      <h1>Counter: {counter}</h1>
       <div>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <button onClick={() => counterDispatch({ type: 'INC' })}>+</button>
+        <button onClick={() => counterDispatch({ type: 'ZERO' })}>0</button>
+        <button onClick={() => counterDispatch({ type: 'DEC' })}>-</button>
       </div>
     </>
   )
