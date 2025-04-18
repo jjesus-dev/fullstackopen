@@ -9,4 +9,17 @@ const getAll = () => {
   return anecdotes
 }
 
-export { getAll }
+const updateAnecdote = (anecdote) => {
+  const anecdoteToUpdate = {
+    content: anecdote.content,
+    votes: anecdote.votes
+  }
+
+  const updatedAnecdote = axios.put(
+    `${baseUrl}/${anecdote.id}`, anecdoteToUpdate
+  ).then(res => res.data)
+
+  return updatedAnecdote;
+}
+
+export { getAll, updateAnecdote }
