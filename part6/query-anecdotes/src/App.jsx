@@ -9,7 +9,8 @@ function App() {
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAll,
-    retry: 1
+    retry: 1,
+    refetchOnWindowFocus: false
   })
 
   const updateAnecdoteMutation = useMutation({
