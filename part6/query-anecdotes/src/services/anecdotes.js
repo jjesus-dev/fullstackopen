@@ -9,6 +9,10 @@ const getAll = () => {
   return anecdotes
 }
 
+const createAnecdote = (newAnecdote) => {
+  axios.post(baseUrl, newAnecdote).then(res => res.data)
+}
+
 const updateAnecdote = (anecdote) => {
   const anecdoteToUpdate = {
     content: anecdote.content,
@@ -22,4 +26,4 @@ const updateAnecdote = (anecdote) => {
   return updatedAnecdote;
 }
 
-export { getAll, updateAnecdote }
+export { getAll, createAnecdote, updateAnecdote }
