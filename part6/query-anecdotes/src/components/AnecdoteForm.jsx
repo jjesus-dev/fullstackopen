@@ -1,14 +1,25 @@
+import { useContext } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createAnecdote } from "../services/anecdotes"
+import AnecdoteContext from '../AnecdoteContext'
 
 const AnecdoteForm = () => {
+  const [notiMessage, notiMessageDispatch] = useContext(AnecdoteContext)
   const queryClient = useQueryClient()
 
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    console.log('New anecdote', content);
+    
+    notiMessageDispatch({
+      type: 'setMessage',
+      text: `Created ${content}!`
+    })
+    setTimeout(() => {
+      notiMessageDispatch('')
+    }, 5000);
+
     newAnecdoteMutation.mutate({ content, votes: 0 })  
   }
 

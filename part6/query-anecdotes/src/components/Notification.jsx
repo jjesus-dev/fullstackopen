@@ -1,4 +1,4 @@
-const Notification = () => {
+const Notification = ({ text }) => {
   const style = {
     border: 'solid',
     borderWidth: '1px',
@@ -6,12 +6,12 @@ const Notification = () => {
     marginBottom: '5px'
   }
 
-  if (true) {
+  if (text === '' || text === undefined) {
     return null
   }
 
   return (
-    <div style={style}></div>
+    <div style={style}>{text}</div>
   )
 }
 

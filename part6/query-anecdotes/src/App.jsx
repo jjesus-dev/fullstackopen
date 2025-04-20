@@ -1,9 +1,23 @@
+import { useReducer } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import AnecdoteForm from "./components/AnecdoteForm"
 import Notification from "./components/Notification"
 import { getAll, updateAnecdote } from "./services/anecdotes"
+import AnecdoteContext from './AnecdoteContext'
+
+const notiMessageReducer = (state, action) => {
+  console.log('action', action);
+
+  switch (action.type) {
+    case 'setMessage':
+      return { text: action.text }
+    default:
+      return { text: '' }
+  }
+}
 
 function App() {
+  const [notiMessage, notiMessageDispatch] = useReducer(notiMessageReducer, { text: '' })
   const queryClient = useQueryClient()
 
   const { isPending, isError, data, error } = useQuery({
@@ -26,7 +40,13 @@ function App() {
   })
 
   const handleVote = (anecdote) => {
-    console.log(anecdote.id);
+    notiMessageDispatch({
+      type: 'setMessage',
+      text: `Voted ${anecdote.content}!`
+    })
+    setTimeout(() => {
+      notiMessageDispatch('')
+    }, 5000);
     
     updateAnecdoteMutation.mutate({
       ...anecdote,
@@ -45,22 +65,24 @@ function App() {
 
   return (
     <>
-      <h3>Anecdote app</h3>
+      <AnecdoteContext.Provider value={[notiMessage, notiMessageDispatch]}>
+        <h3>Anecdote app</h3>
 
-      <Notification />
-      <AnecdoteForm />
+        <Notification text={notiMessage.text} />
+        <AnecdoteForm />
 
-      <ul>
-        {data.map(anecdote =>
-          <li key={anecdote.id}>
-            <p>{anecdote.content}</p>
-            <div>
-              <span>has {anecdote.votes} </span>
-              <button onClick={() => handleVote(anecdote)}>Vote</button>
-            </div>
-          </li>
-        )}
-      </ul>
+        <ul>
+          {data.map(anecdote =>
+            <li key={anecdote.id}>
+              <p>{anecdote.content}</p>
+              <div>
+                <span>has {anecdote.votes} </span>
+                <button onClick={() => handleVote(anecdote)}>Vote</button>
+              </div>
+            </li>
+          )}
+        </ul>
+      </AnecdoteContext.Provider>
     </>
   )
 }
