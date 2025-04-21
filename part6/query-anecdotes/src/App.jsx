@@ -6,8 +6,6 @@ import { getAll, updateAnecdote } from "./services/anecdotes"
 import AnecdoteContext from './AnecdoteContext'
 
 const notiMessageReducer = (state, action) => {
-  console.log('action', action);
-
   switch (action.type) {
     case 'setMessage':
       return { text: action.text }
@@ -36,22 +34,29 @@ function App() {
         ? updatedAnecdote : anecdote
       )
       queryClient.setQueryData(['anecdotes'], newAnecdotes)
+
+      notiMessageDispatch({
+        type: 'setMessage',
+        text: `Voted ${updatedAnecdote.content}!`
+      })
+    },
+    onError: (error) => {
+      notiMessageDispatch({
+        type: 'setMessage',
+        text: `Error: ${error.message}!`
+      })
     }
   })
 
   const handleVote = (anecdote) => {
-    notiMessageDispatch({
-      type: 'setMessage',
-      text: `Voted ${anecdote.content}!`
-    })
-    setTimeout(() => {
-      notiMessageDispatch('')
-    }, 5000);
-    
     updateAnecdoteMutation.mutate({
       ...anecdote,
       votes: anecdote.votes + 1
     })
+
+    setTimeout(() => {
+      notiMessageDispatch('')
+    }, 5000);
   }
 
   if (isPending) {

@@ -12,26 +12,39 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     
-    notiMessageDispatch({
-      type: 'setMessage',
-      text: `Created ${content}!`
-    })
+    newAnecdoteMutation.mutate({ content, votes: 0 })
+    
     setTimeout(() => {
       notiMessageDispatch('')
     }, 5000);
-
-    newAnecdoteMutation.mutate({ content, votes: 0 })  
   }
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
     onSuccess: (newAnecdote) => {
-      console.log('success', newAnecdote);
-      
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(
         ['anecdotes'], anecdotes.concat(newAnecdote)
       )
+
+      notiMessageDispatch({
+        type: 'setMessage',
+        text: `Created ${newAnecdote.content}!`
+      })
+    },
+    onError: (error) => {
+      let errorMessage = ''
+
+      if (error.response) {
+        errorMessage = error.response.data.error
+      } else {
+        errorMessage = error.message
+      }
+
+      notiMessageDispatch({
+        type: 'setMessage',
+        text: `Error: ${errorMessage}!`
+      })
     }
   })
 

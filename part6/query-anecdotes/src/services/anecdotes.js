@@ -10,7 +10,10 @@ const getAll = () => {
 }
 
 const createAnecdote = (newAnecdote) => {
-  return axios.post(baseUrl, newAnecdote).then(res => res.data)
+  const result = axios.post(baseUrl, newAnecdote)
+    .then(res => res.data)
+
+  return result
 }
 
 const updateAnecdote = (anecdote) => {
