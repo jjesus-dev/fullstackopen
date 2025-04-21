@@ -18,3 +18,8 @@ Every part has its own directory. When possible, some diagrams may also be in Sp
 
 ### Part 3 - [Programming a server with NodeJS and Express](https://github.com/jjesus-dev/fullstackopen/tree/main/part3)
 
+### Part 4 - [Testing Express servers, user administration](https://github.com/jjesus-dev/fullstackopen/tree/main/part4)
+
+### Part 5 - [Testing React apps](https://github.com/jjesus-dev/fullstackopen/tree/main/part5)
+
+### Part 6 - [Advanced state management](https://github.com/jjesus-dev/fullstackopen/tree/main/part6)
