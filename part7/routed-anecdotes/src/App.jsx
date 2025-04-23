@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import Menu from './components/Menu'
+import Anecdote from './components/Anecdote'
 import AnecdoteList from './components/AnecdoteList'
 import About from './components/About'
 import CreateNew from './components/CreateNew'
 import Footer from './components/Footer'
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Route, Routes, useMatch } from 'react-router-dom'
 
 function App() {
   const [anecdotes, setAnecdotes] = useState([
@@ -31,7 +32,7 @@ function App() {
     setAnecdotes(anecdotes.concat(anecdote))
   }
 
-  const anecdoteById = () => {
+  const anecdoteById = (id) => {
     return anecdotes.find(a => a.id === id)
   }
 
@@ -48,19 +49,25 @@ function App() {
     ))
   }
 
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdoteById(Number(match.params.id))
+    : null
+
   return (
     <>
       <h1>Software anecdotes</h1>
-      <Router>
+
         <div>
           <Menu />
           <Routes>
             <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
+            <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdote} />} />
             <Route path='/create' element={<CreateNew addNew={addNew} />} />
             <Route path='/about' element={<About />} />
           </Routes>
         </div>
-      </Router>
+
       <Footer />
     </>
   )
