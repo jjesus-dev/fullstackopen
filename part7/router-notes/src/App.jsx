@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Link, Navigate, Route, Routes, useMatch } from 'react-router-dom'
 import Home from './components/Home'
 import Note from './components/Note'
 import Notes from './components/Notes'
@@ -38,36 +38,40 @@ function App() {
     padding: '5px'
   }
 
+  const match = useMatch('/notes/:id')
+  const note = match 
+    ? notes.find(note => note.id === Number(match.params.id))
+    : null
+
   return (
     <>
-    <Router>
-      <h2>Pages</h2>
-      <div>
-        <Link style={padding} to='/'>Home</Link>
-        <Link style={padding} to='/notes'>Notes</Link>
-        <Link style={padding} to='/users'>Users</Link>
-        {user
-          ? <em>{user} logger in</em>
-          : <Link style={padding} to='/login'>Login</Link>
-        }
-      </div>
+      
+        <h2>Pages</h2>
+        <div>
+          <Link style={padding} to='/'>Home</Link>
+          <Link style={padding} to='/notes'>Notes</Link>
+          <Link style={padding} to='/users'>Users</Link>
+          {user
+            ? <em>{user} logger in</em>
+            : <Link style={padding} to='/login'>Login</Link>
+          }
+        </div>
 
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/notes/:id' element={<Note notes={notes} />} />
-        <Route path='/notes' element={<Notes notes={notes} />} />
-        <Route path='/users' element={user 
-          ? <Users />
-          : <Navigate replace to='/login' />}
-        />
-        <Route path='/login' element={<Login onLogin={login} />} />
-      </Routes>
-
-      <div>
-        <br />
-        <em>Note app, Department of Computer Science 2025</em>
-      </div>
-    </Router>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/notes/:id' element={<Note note={note} />} />
+          <Route path='/notes' element={<Notes notes={notes} />} />
+          <Route path='/users' element={user 
+            ? <Users />
+            : <Navigate replace to='/login' />}
+          />
+          <Route path='/login' element={<Login onLogin={login} />} />
+        </Routes>
+      
+      <footer>
+          <br />
+          <em>Note app, Department of Computer Science 2025</em>
+      </footer>
     </>
   )
 }
