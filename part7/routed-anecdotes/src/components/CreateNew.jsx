@@ -17,7 +17,7 @@ const CreateNew = (props) => {
 
   return (
     <div>
-      <h2></h2>
+      <h2>Create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>Content: 
           <input type='text' name='content' value={content} onChange={(e) => setContent(e.target.value)}/>
@@ -28,6 +28,7 @@ const CreateNew = (props) => {
         <div>Url for more info:
           <input type='text' name='info' value={info} onChange={(e) => setInfo(e.target.value)}/>
         </div>
+        <button>Create</button>
       </form>
     </div>
   )
