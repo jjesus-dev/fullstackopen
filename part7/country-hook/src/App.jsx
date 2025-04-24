@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import axios from 'axios'
 import Country from './components/Country'
 import { useCountry, useField } from './hooks'
 

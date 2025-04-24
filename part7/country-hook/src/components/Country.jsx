@@ -11,12 +11,12 @@ const Country = ({ country }) => {
 
   return (
     <div>
-      <h3>{country.data.name}</h3>
+      <h3>{country.data.name.common}</h3>
       <div>Capital {country.data.capital}</div>
       <div>Population {country.data.population}</div>
-      <img src={country.data.flag}
+      <img src={country.data.flags.png}
         height='100'
-        alt={`Flag of ${country.data.name}`} />
+        alt={`Flag of ${country.data.name.common}`} />
     </div>
   )
 }
