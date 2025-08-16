@@ -1,40 +1,12 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-
-const useField = (type) => {
-  const [value, setValue] = useState('')
-
-  const onChange = (e) => {
-    setValue(e.target.value)
-  }
-
-  return {
-    type, value, onChange
-  }
-}
-
-const useResource = (baseUrl) => {
-  const [resources, setResources] = useState([])
-
-  const create = (resource) => {
-    console.log(baseUrl)
-    console.log(resource)
-  }
-
-  const service = {
-    create
-  }
-
-  return [resources, service]
-}
+import { useResource, useField } from './hooks'
 
 function App() {
   const content = useField('text')
   const name = useField('text')
   const number = useField('text')
 
-  const [notes, noteService] = useResource('http://localhost:3005/notes')
-  const [persons, personService] = useResource('http://localhost:3005/persons')
+  const [notes, noteService] = useResource('http://localhost:3001/notes')
+  const [persons, personService] = useResource('http://localhost:3001/persons')
 
   const handleNoteSubmit = (e) => {
     e.preventDefault()

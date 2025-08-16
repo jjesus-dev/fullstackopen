@@ -1,3 +1,8 @@
+# Excercise 7.8
+This project use a custom hook to create and fetch `resources`. It connects with the notes (part5) and bloglist (persons) backends.
+
+The ports are 3001.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
