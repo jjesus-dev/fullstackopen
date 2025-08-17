@@ -5,6 +5,7 @@ import Note from './components/Note'
 import Notes from './components/Notes'
 import Users from './components/Users'
 import Login from './components/Login'
+import { Alert, Nav, Navbar } from 'react-bootstrap'
 
 function App() {
   const [notes, setNotes] = useState([
@@ -29,9 +30,14 @@ function App() {
   ])
 
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const login = (user) => {
     setUser(user)
+    setMessage(`Welcome ${user}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 1000);
   }
 
   const padding = {
@@ -45,27 +51,48 @@ function App() {
 
   return (
     <div className='container'>
-        <h2>Pages</h2>
-        <div>
-          <Link style={padding} to='/'>Home</Link>
-          <Link style={padding} to='/notes'>Notes</Link>
-          <Link style={padding} to='/users'>Users</Link>
-          {user
-            ? <em>{user} logger in</em>
-            : <Link style={padding} to='/login'>Login</Link>
-          }
-        </div>
+      {(message &&
+        <Alert variant='success'>
+          {message}
+        </Alert>
+      )}
 
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/notes/:id' element={<Note note={note} />} />
-          <Route path='/notes' element={<Notes notes={notes} />} />
-          <Route path='/users' element={user 
-            ? <Users />
-            : <Navigate replace to='/login' />}
-          />
-          <Route path='/login' element={<Login onLogin={login} />} />
-        </Routes>
+      <div>
+        <Navbar collapseOnSelect expand='lg'
+          bg='dark' variant='dark'>
+            <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+            <Navbar.Collapse id='responsive-navbar-nav'>
+              <Nav className='me-auto'>
+                <Nav.Link href='#' as='span'>
+                  <Link style={padding} to='/'>Home</Link>
+                </Nav.Link>
+                <Nav.Link href='#' as='span'>
+                  <Link style={padding} to='/notes'>Notes</Link>
+                </Nav.Link>
+                <Nav.Link href='#' as='span'>
+                  <Link style={padding} to='/users'>Users</Link>
+                </Nav.Link>
+                <Nav.Link href='#' as='span'>
+                  {user
+                    ? <em>{user} logger in</em>
+                    : <Link style={padding} to='/login'>Login</Link>
+                  }
+                </Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+        </Navbar>
+      </div>
+
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/notes/:id' element={<Note note={note} />} />
+        <Route path='/notes' element={<Notes notes={notes} />} />
+        <Route path='/users' element={user 
+          ? <Users />
+          : <Navigate replace to='/login' />}
+        />
+        <Route path='/login' element={<Login onLogin={login} />} />
+      </Routes>
       
       <footer>
           <br />
