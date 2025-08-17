@@ -5,6 +5,7 @@ import Note from './components/Note'
 import Notes from './components/Notes'
 import Users from './components/Users'
 import Login from './components/Login'
+import { Alert, AppBar, Button, Container, IconButton, Toolbar } from '@mui/material'
 
 function App() {
   const [notes, setNotes] = useState([
@@ -49,17 +50,36 @@ function App() {
     : null
 
   return (
-    <div>
-      <h2>Pages</h2>
+    <Container>
       <div>
-        <Link style={padding} to='/'>Home</Link>
-        <Link style={padding} to='/notes'>Notes</Link>
-        <Link style={padding} to='/users'>Users</Link>
-        {user
-          ? <em>{user} logger in</em>
-          : <Link style={padding} to='/login'>Login</Link>
-        }
+      {(message &&
+        <Alert severity='success'>
+          {message}
+        </Alert>
+      )}
       </div>
+
+      <AppBar position='static'>
+        <Toolbar>
+          <IconButton edge='start' color='inherit' aria-label='menu'>
+          </IconButton>
+          <Button color='inherit'>
+            <Link to='/'>Home</Link>
+          </Button>
+          <Button color='inherit'>
+            <Link to='/notes'>Notes</Link>
+          </Button>
+          <Button color='inherit'>
+            <Link to='/users'>Users</Link>
+          </Button>
+          <Button color='inherit'>
+            {user
+              ? <em>{user} logged in</em>
+              : <Link to='/login'>Login</Link>
+            }
+          </Button>
+        </Toolbar>
+      </AppBar>
 
       <Routes>
         <Route path='/' element={<Home />} />
@@ -76,7 +96,7 @@ function App() {
           <br />
           <em>Note app, Department of Computer Science 2025</em>
       </footer>
-    </div>
+    </Container>
   )
 }
 
