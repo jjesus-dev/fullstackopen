@@ -44,8 +44,7 @@ function App() {
     : null
 
   return (
-    <>
-      
+    <div className='container'>
         <h2>Pages</h2>
         <div>
           <Link style={padding} to='/'>Home</Link>
@@ -72,7 +71,7 @@ function App() {
           <br />
           <em>Note app, Department of Computer Science 2025</em>
       </footer>
-    </>
+    </div>
   )
 }
 
