@@ -13,6 +13,7 @@
   "license": "MIT",
   "devDependencies": {
     "nodemon": "^3.1.9",
+    "prettier": "3.6.2",
     "supertest": "^7.0.0"
   },
   "dependencies": {
