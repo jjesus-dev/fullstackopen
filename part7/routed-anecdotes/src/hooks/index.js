@@ -32,7 +32,18 @@ export const useAnecdotes = () => {
       .catch(error => console.error('Failed to fetch notes:', error))
   })
 
+  const addAnecdote = async (anecdote) => {
+    await fetch(baseUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(anecdote),
+    }).then(response => response.json())
+    .catch(error => console.error('Failed to POST a note:', error))
+
+  }
+
   return {
-    anecdotes
+    anecdotes,
+    addAnecdote
   }
 }

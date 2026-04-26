@@ -7,12 +7,7 @@ import CreateNew from './components/CreateNew'
 import { useAnecdotes } from './hooks'
 
 const App = () => {
-  const { anecdotes } = useAnecdotes()
-
-  const addAnecdote = (anecdote) => {
-    console.log('Adding an anecdote', anecdote)
-    //setAnecdotes(anecdotes.concat({ ...anecdote, id: Math.round(Math.random() * 10000) }))
-  }
+  const { anecdotes, addAnecdote } = useAnecdotes()
 
   return (
     <Router>
