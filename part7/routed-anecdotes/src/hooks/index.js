@@ -38,12 +38,19 @@ export const useAnecdotes = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(anecdote),
     }).then(response => response.json())
-    .catch(error => console.error('Failed to POST a note:', error))
+      .catch(error => console.error('Failed to POST a note:', error))
+  }
 
+  const deleteAnecdote = async (id) => {
+    await fetch(baseUrl + `/${id}`, {
+      method: 'DELETE',
+    }).then(response => response.json())
+      .catch(error => console.error(`Failed to DELETE note ${id}:`, error))
   }
 
   return {
     anecdotes,
-    addAnecdote
+    addAnecdote,
+    deleteAnecdote
   }
 }
