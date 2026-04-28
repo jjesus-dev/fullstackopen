@@ -1,46 +1,43 @@
 import { useNavigate } from 'react-router-dom'
-import { useField } from '../hooks'
+import { useField, useAnecdotes } from '../hooks'
 
-const CreateNew = (props) => {
+const CreateNew = () => {
   const content = useField('text')
   const author = useField('text')
   const info = useField('text')
-  
-  let navigate = useNavigate()
+  const navigate = useNavigate()
+  const { addAnecdote } = useAnecdotes()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
-      votes: 0
-    })
-    
+    addAnecdote({ content: content.value, author: author.value, info: info.value, votes: 0 })
     navigate('/')
   }
 
   const handleReset = () => {
-    content.onReset()
+    content.onReset(),
     author.onReset()
     info.onReset()
   }
 
   return (
     <div>
-      <h2>Create a new anecdote</h2>
+      <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
-        <div>Content: 
+        <div>
+          content
           <input {...content} />
         </div>
-        <div>Author:
-        <input {...author} />
+        <div>
+          author
+          <input {...author} />
         </div>
-        <div>Url for more info:
+        <div>
+          url for more info
           <input {...info} />
         </div>
-        <button type='submit'>Create</button>
-        <button type='reset' onClick={handleReset}>Reset</button>
+        <button>create</button>
+        <button type='reset' onClick={handleReset}>reset</button>
       </form>
     </div>
   )
