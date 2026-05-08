@@ -13,9 +13,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -37,23 +34,12 @@ const App = () => {
     }, 5000)
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
+  const addBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.create({
-        title: title,
-        url: url,
-        author: author,
+      blogService.create(blogObject).then((returnedBlog) => {
+        setBlogs(blogs.concat(returnedBlog))
+        notify(`Blog created: ${returnedBlog.title}`)
       })
-
-      notify(`Blog created: ${newBlog.title}`)
-
-      setAuthor('')
-      setTitle('')
-      setUrl('')
-
-      setBlogs(blogs.concat(newBlog))
     } catch (error) {
       console.log(error)
       notify('Error adding a blog', 'error')
@@ -127,15 +113,7 @@ const App = () => {
       <Notification notification={notification} />
 
       <Togglable buttonLabel="New Blog">
-        <BlogForm
-          onSubmit={handleSubmit}
-          title={title}
-          url={url}
-          author={author}
-          onTitleChange={({ target }) => setTitle(target.value)}
-          onUrlChange={({ target }) => setUrl(target.value)}
-          onAuthorChange={({ target }) => setAuthor(target.value)}
-        />
+        <BlogForm createBlog={addBlog} />
       </Togglable>
 
       <h2>Blogs</h2>
