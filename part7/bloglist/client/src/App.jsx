@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -15,9 +18,7 @@ const App = () => {
   const [author, setAuthor] = useState('')
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
@@ -36,18 +37,6 @@ const App = () => {
     }, 5000)
   }
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value)
-  }
-
-  const handleUrlChange = (e) => {
-    setUrl(e.target.value)
-  }
-
-  const handleAuthorChange = (e) => {
-    setAuthor(e.target.value)
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -55,7 +44,7 @@ const App = () => {
       const newBlog = await blogService.create({
         title: title,
         url: url,
-        author: author
+        author: author,
       })
 
       notify(`Blog created: ${newBlog.title}`)
@@ -103,62 +92,15 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:
-            <input type="text" value={username} id='txtUsername'
-              onChange={({ target }) => setUsername(target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>Password:
-            <input type="password" value={password} id='txtPassword'
-              onChange={({ target }) => setPassword(target.value)} />
-          </label>
-        </div>
-        <div>
-          <button type='submit'>Login</button>
-        </div>
-      </form>
-    </div>
-  )
-
-  const blogForm = () => (
-    <div>
-      <h2>Create a New Blog</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input
-            type="text"
-            data-testid="title"
-            value={title}
-            onChange={handleTitleChange}
-          />
-        </div>
-        <div>
-          <label>URL:</label>
-          <input
-            type="text"
-            data-testid="url"
-            value={url}
-            onChange={handleUrlChange}
-          />
-        </div>
-        <div>
-          <label>Author:</label>
-          <input
-            type="text"
-            data-testid="author"
-            value={author}
-            onChange={handleAuthorChange}
-          />
-        </div>
-        <button type="submit">Create</button>
-      </form>
-    </div>
+    <Togglable buttonLabel="Log in">
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleLogin={handleLogin}
+      />
+    </Togglable>
   )
 
   if (user === null) {
@@ -175,17 +117,31 @@ const App = () => {
     <div>
       <h2>Blog App</h2>
 
-      <div><p>'{user.name}' logged in. <button onClick={handleLogout}>Logout</button></p></div>
+      <div>
+        <p>
+          '{user.name}' logged in.{' '}
+          <button onClick={handleLogout}>Logout</button>
+        </p>
+      </div>
 
       <Notification notification={notification} />
 
-
-      {blogForm()}
+      <Togglable buttonLabel="New Blog">
+        <BlogForm
+          onSubmit={handleSubmit}
+          title={title}
+          url={url}
+          author={author}
+          onTitleChange={({ target }) => setTitle(target.value)}
+          onUrlChange={({ target }) => setUrl(target.value)}
+          onAuthorChange={({ target }) => setAuthor(target.value)}
+        />
+      </Togglable>
 
       <h2>Blogs</h2>
-      {blogs.map(blog =>
+      {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
-      )}
+      ))}
     </div>
   )
 }
