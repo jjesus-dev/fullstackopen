@@ -38,4 +38,11 @@ export default [
       'no-console': 'off',
     },
   },
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: { ...globals.vitest },
+    },
+  },
 ]
