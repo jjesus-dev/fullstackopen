@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -13,6 +13,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -35,14 +36,51 @@ const App = () => {
   }
 
   const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     try {
-      blogService.create(blogObject).then((returnedBlog) => {
+      await blogService.create(blogObject).then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog))
         notify(`Blog created: ${returnedBlog.title}`)
       })
     } catch (error) {
       console.log(error)
       notify('Error adding a blog', 'error')
+    }
+  }
+
+  const handleDelete = async (blogObject) => {
+    if (
+      window.confirm(
+        `Remove blog '${blogObject.title}' by ${blogObject.author}?`,
+      )
+    ) {
+      try {
+        await blogService.remove(blogObject.id)
+        setBlogs(blogs.filter((b) => b.id !== blogObject.id))
+        notify(`Blog entry '${blogObject.title}' removed!`)
+      } catch (error) {
+        console.log(error)
+        notify('Error removing a blog', 'error')
+      }
+    }
+  }
+
+  const handleLike = async (blogObject) => {
+    try {
+      await blogService
+        .update(blogObject.id, {
+          ...blogObject,
+          likes: blogObject.likes + 1,
+        })
+        .then((updatedBlog) => {
+          setBlogs(blogs.map((b) => (b.id === blogObject.id ? updatedBlog : b)))
+          notify(
+            `Like added to: '${updatedBlog.title}' by ${updatedBlog.author}`,
+          )
+        })
+    } catch (error) {
+      console.log(error)
+      notify('Error liking a blog', 'error')
     }
   }
 
@@ -99,6 +137,8 @@ const App = () => {
     )
   }
 
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+
   return (
     <div>
       <h2>Blog App</h2>
@@ -112,13 +152,18 @@ const App = () => {
 
       <Notification notification={notification} />
 
-      <Togglable buttonLabel="New Blog">
+      <Togglable buttonLabel="New Blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
       <h2>Blogs</h2>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+      {sortedBlogs.map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          likeBlog={() => handleLike(blog)}
+          deleteBlog={() => handleDelete(blog)}
+        />
       ))}
     </div>
   )

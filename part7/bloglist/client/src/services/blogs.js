@@ -3,33 +3,43 @@ const baseUrl = '/api/blogs'
 
 let token = null
 
-const setToken = newToken => {
+const setToken = (newToken) => {
   //console.log('set token')
   token = `Bearer ${newToken}`
 }
 
-const getAll = () => {
+const getAll = async () => {
   const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+  return request.then((response) => response.data)
 }
 
-const create = newBlog => {
+const create = async (newBlog) => {
   const config = {
-    headers: { Authorization: token }
+    headers: { Authorization: token },
   }
 
   const request = axios.post(baseUrl, newBlog, config)
-  return request.then(response => response.data)
-    .catch(error => console.error('error creating blog', error))
+  return request
+    .then((response) => response.data)
+    .catch((error) => console.error('error creating a blog', error))
 }
 
-const update = (id, newBlog) => {
+const update = async (id, newBlog) => {
   const request = axios.put(`${baseUrl}/${id}`, newBlog)
-  return request.then(response => response.data)
+  return request
+    .then((response) => response.data)
+    .catch((error) => console.error('error updating a blog', error))
 }
 
-const remove = () => {
+const remove = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  }
 
+  const request = axios.delete(`${baseUrl}/${id}`, config)
+  return request
+    .then((response) => response.data)
+    .catch((error) => console.error('error deleting a blog', error))
 }
 
 export default { getAll, create, update, remove, setToken }
