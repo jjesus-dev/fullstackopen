@@ -3,6 +3,11 @@ import { useState } from 'react'
 const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
 
+  // conditional rendering in case `blog` or `loggedUser` aren't defined
+  if (!blog || !loggedUser) {
+    return null
+  }
+
   const blogUser = blog.user ? blog.user.name : 'anonymous'
   const canRemove = () => {
     if (loggedUser && loggedUser.username === blog.user.username) {
