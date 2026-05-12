@@ -15,7 +15,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
-  const blogFormRef = useRef()
   const navigation = useNavigate()
 
   useEffect(() => {
@@ -39,10 +38,10 @@ const App = () => {
   }
 
   const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
     try {
       await blogService.create(blogObject).then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog))
+        navigation('/')
         notify(`Blog created: ${returnedBlog.title}`)
       })
     } catch (error) {
@@ -60,6 +59,7 @@ const App = () => {
       try {
         await blogService.remove(blogObject.id)
         setBlogs(blogs.filter((b) => b.id !== blogObject.id))
+        navigation('/')
         notify(`Blog entry '${blogObject.title}' removed!`)
       } catch (error) {
         console.log(error)
@@ -158,7 +158,9 @@ const App = () => {
             Login
           </Link>
         ) : (
-          <button onClick={handleLogout}>Logout</button>
+          <span style={navbarStyle}>
+            <button onClick={handleLogout}>Logout</button>
+          </span>
         )}
         <Link style={navbarStyle} to="/create">
           New Blog
