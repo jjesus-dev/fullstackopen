@@ -1,10 +1,16 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, likeBlog, deleteBlog }) => {
+const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
 
-  const nameOfUser = blog.user ? blog.user.name : 'anonymous'
-  const canRemove = true //blog.user ? blog.user.username === false : true
+  const blogUser = blog.user ? blog.user.name : 'anonymous'
+  const canRemove = () => {
+    if (loggedUser && loggedUser.username === blog.user.username) {
+      return true
+    }
+
+    return false
+  }
 
   const blogStyle = {
     borderBottom: 'solid',
@@ -28,8 +34,8 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
           <div>
             {blog.likes} Likes. <button onClick={likeBlog}>like</button>
           </div>
-          <div>{nameOfUser}</div>
-          {canRemove && <button onClick={deleteBlog}>remove</button>}
+          <div>{blogUser}</div>
+          {canRemove() && <button onClick={deleteBlog}>remove</button>}
         </div>
       )}
     </div>

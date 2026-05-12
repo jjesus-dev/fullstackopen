@@ -71,6 +71,7 @@ const App = () => {
         .update(blogObject.id, {
           ...blogObject,
           likes: blogObject.likes + 1,
+          user: blogObject.user.id,
         })
         .then((updatedBlog) => {
           setBlogs(blogs.map((b) => (b.id === blogObject.id ? updatedBlog : b)))
@@ -161,6 +162,7 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
+          loggedUser={user}
           likeBlog={() => handleLike(blog)}
           deleteBlog={() => handleDelete(blog)}
         />
