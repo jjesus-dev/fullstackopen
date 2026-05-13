@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from '@mui/material'
 import Blog from './Blog'
 
@@ -20,7 +21,9 @@ const BlogList = ({ blogs }) => {
 
   return (
     <div>
-      <h2>Blogs</h2>
+      <Typography variant="h5" component="div" sx={{ margin: 2 }}>
+        Blogs
+      </Typography>
 
       <TableContainer component={Paper}>
         <Table>
