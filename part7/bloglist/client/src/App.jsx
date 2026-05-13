@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
+import { useState, useEffect } from 'react'
+import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
+import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
-import LoginForm from './components/LoginForm'
+import Blog from './components/Blog'
+import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,7 +15,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
-  const blogFormRef = useRef()
+  const navigation = useNavigate()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -28,18 +30,18 @@ const App = () => {
     }
   }, [])
 
-  const notify = (message, type = 'success') => {
-    setNotification({ message, type })
+  const notify = (text, type = 'success') => {
+    setNotification({ text, type })
     setTimeout(() => {
       setNotification(null)
     }, 5000)
   }
 
   const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
     try {
       await blogService.create(blogObject).then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog))
+        navigation('/')
         notify(`Blog created: ${returnedBlog.title}`)
       })
     } catch (error) {
@@ -57,6 +59,7 @@ const App = () => {
       try {
         await blogService.remove(blogObject.id)
         setBlogs(blogs.filter((b) => b.id !== blogObject.id))
+        navigation('/')
         notify(`Blog entry '${blogObject.title}' removed!`)
       } catch (error) {
         console.log(error)
@@ -71,6 +74,7 @@ const App = () => {
         .update(blogObject.id, {
           ...blogObject,
           likes: blogObject.likes + 1,
+          user: blogObject.user.id,
         })
         .then((updatedBlog) => {
           setBlogs(blogs.map((b) => (b.id === blogObject.id ? updatedBlog : b)))
@@ -94,6 +98,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      navigation('/')
       notify(`Welcome back, ${user.name}`)
     } catch (error) {
       console.log(error)
@@ -108,6 +113,7 @@ const App = () => {
       window.localStorage.removeItem('loggedBlogAppUser')
       blogService.setToken(null)
       setUser(null)
+      navigation('/')
       notify(`Bye, ${user.name}`)
     } catch (error) {
       console.log(error)
@@ -116,56 +122,82 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <Togglable buttonLabel="Log in">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleLogin={handleLogin}
-      />
-    </Togglable>
+    <LoginForm
+      username={username}
+      password={password}
+      handleUsernameChange={({ target }) => setUsername(target.value)}
+      handlePasswordChange={({ target }) => setPassword(target.value)}
+      handleLogin={handleLogin}
+    />
   )
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Blog App</h2>
-        <Notification notification={notification} />
-        {loginForm()}
-      </div>
-    )
-  }
+  const blogMatch = useMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs.find((b) => b.id === blogMatch.params.id)
+    : null
 
-  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+  const hoverNavStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   return (
-    <div>
-      <h2>Blog App</h2>
-
-      <div>
-        <p>
-          '{user.name}' logged in.{' '}
-          <button onClick={handleLogout}>Logout</button>
-        </p>
-      </div>
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            BlogApp
+          </Typography>
+          <Button color="inherit" component={Link} to="/" sx={hoverNavStyle}>
+            Blogs
+          </Button>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/create"
+            sx={hoverNavStyle}
+          >
+            New Blog
+          </Button>
+          {user === null ? (
+            <Button
+              color="inherit"
+              component={Link}
+              to="/login"
+              sx={hoverNavStyle}
+            >
+              Login
+            </Button>
+          ) : (
+            <Button
+              color="inherit"
+              component={Link}
+              nativeButton={false}
+              onClick={handleLogout}
+              sx={hoverNavStyle}
+            >
+              Logout - {user.name}
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
       <Notification notification={notification} />
 
-      <Togglable buttonLabel="New Blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Togglable>
-
-      <h2>Blogs</h2>
-      {sortedBlogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          likeBlog={() => handleLike(blog)}
-          deleteBlog={() => handleDelete(blog)}
+      <Routes>
+        <Route path="/" element={<BlogList blogs={blogs} />} />
+        <Route path="/login" element={loginForm()} />
+        <Route
+          path="/blogs/:id"
+          element={
+            <Blog
+              blog={blog}
+              loggedUser={user}
+              likeBlog={() => handleLike(blog)}
+              deleteBlog={() => handleDelete(blog)}
+            />
+          }
         />
-      ))}
-    </div>
+        <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+      </Routes>
+    </Container>
   )
 }
 

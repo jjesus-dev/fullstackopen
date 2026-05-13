@@ -1,38 +1,66 @@
-import { useState } from 'react'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Link,
+  Typography,
+} from '@mui/material'
 
-const Blog = ({ blog, likeBlog, deleteBlog }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
+  // conditional rendering in case `blog` or `loggedUser` aren't defined
+  if (!blog || !loggedUser) {
+    return null
+  }
 
-  const nameOfUser = blog.user ? blog.user.name : 'anonymous'
-  const canRemove = true //blog.user ? blog.user.username === false : true
+  const blogUser = blog.user ? blog.user.name : 'anonymous'
+  const canRemove = () => {
+    if (loggedUser && loggedUser.username === blog.user.username) {
+      return true
+    }
 
-  const blogStyle = {
-    borderBottom: 'solid',
-    borderWidth: 2,
-    borderColor: 'gray',
-    padding: 10,
-    marginBottom: 5,
+    return false
   }
 
   return (
-    <div style={blogStyle}>
-      {blog.title} by {blog.author}{' '}
-      <button onClick={() => setVisible(!visible)}>
-        {visible ? 'Hide' : 'View'}
-      </button>
-      {visible && (
-        <div>
-          <div style={{ marginTop: 4, marginBlock: 4 }}>
-            <a href={blog.url}>{blog.url}</a>
-          </div>
-          <div>
-            {blog.likes} Likes. <button onClick={likeBlog}>like</button>
-          </div>
-          <div>{nameOfUser}</div>
-          {canRemove && <button onClick={deleteBlog}>remove</button>}
-        </div>
-      )}
-    </div>
+    <Card variant="outlined" sx={{ marginTop: 2 }}>
+      <CardContent>
+        <Typography variant="h5" component="div">
+          {blog.title}
+        </Typography>
+        <Typography sx={{ color: 'text.secondary' }}>
+          by {blog.author}
+        </Typography>
+        <Typography>
+          <Link href={blog.url}>{blog.url}</Link>
+        </Typography>
+        <br />
+        <Typography sx={{ color: 'text.secondary' }}>
+          Added by {blogUser}
+        </Typography>
+
+        <Box
+          sx={{
+            marginTop: 2,
+            display: 'flex',
+            alignItems: 'center',
+            columnGap: 2,
+          }}
+        >
+          <Typography>{blog.likes} Likes.</Typography>
+          <Button onClick={likeBlog} variant="outlined">
+            like
+          </Button>
+
+          {canRemove() && (
+            <Button onClick={deleteBlog} variant="outlined" color="error">
+              remove
+            </Button>
+          )}
+        </Box>
+      </CardContent>
+    </Card>
   )
 }
 export default Blog
