@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
+import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
@@ -30,8 +30,8 @@ const App = () => {
     }
   }, [])
 
-  const notify = (message, type = 'success') => {
-    setNotification({ message, type })
+  const notify = (text, type = 'success') => {
+    setNotification({ text, type })
     setTimeout(() => {
       setNotification(null)
     }, 5000)
@@ -131,46 +131,53 @@ const App = () => {
     />
   )
 
-  //const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
   const blogMatch = useMatch('/blogs/:id')
   const blog = blogMatch
     ? blogs.find((b) => b.id === blogMatch.params.id)
     : null
 
-  const navbarStyle = {
-    backgroundColor: '#1C71D8',
-    color: '#DDDDDD',
-    textDecoration: 'none',
-    borderLeft: 'solid',
-    borderWidth: '2',
-    marginBottom: 5,
-    padding: 10,
-  }
+  const hoverNavStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   return (
-    <div>
-      <div>
-        <Link style={navbarStyle} to="/">
-          Blogs
-        </Link>
-        {user === null ? (
-          <Link style={navbarStyle} to="/login">
-            Login
-          </Link>
-        ) : (
-          <span style={navbarStyle}>
-            <button onClick={handleLogout}>Logout</button>
-          </span>
-        )}
-        <Link style={navbarStyle} to="/create">
-          New Blog
-        </Link>
-      </div>
-
-      <h2>
-        Blog App
-        {user && <span> - Logged in as '{user.name}'.</span>}
-      </h2>
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            BlogApp
+          </Typography>
+          <Button color="inherit" component={Link} to="/" sx={hoverNavStyle}>
+            Blogs
+          </Button>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/create"
+            sx={hoverNavStyle}
+          >
+            New Blog
+          </Button>
+          {user === null ? (
+            <Button
+              color="inherit"
+              component={Link}
+              to="/login"
+              sx={hoverNavStyle}
+            >
+              Login
+            </Button>
+          ) : (
+            <Button
+              color="inherit"
+              component={Link}
+              nativeButton={false}
+              onClick={handleLogout}
+              sx={hoverNavStyle}
+            >
+              Logout - {user.name}
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
       <Notification notification={notification} />
 
@@ -190,7 +197,7 @@ const App = () => {
         />
         <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
       </Routes>
-    </div>
+    </Container>
   )
 }
 
