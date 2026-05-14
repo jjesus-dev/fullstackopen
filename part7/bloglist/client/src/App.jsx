@@ -24,7 +24,7 @@ const App = () => {
   const notification = useNotification()
   const { updateMessage } = useNotificationActions()
   const blogs = useBlogs()
-  const { createBlog, setBlogs } = useBlogsActions()
+  const { createBlog, likeBlog, removeBlog, setBlogs } = useBlogsActions()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -67,7 +67,7 @@ const App = () => {
     ) {
       try {
         await blogService.remove(blogObject.id)
-        setBlogs(blogs.filter((b) => b.id !== blogObject.id))
+        removeBlog(blogObject.id)
         navigation('/')
         notify(`Blog entry '${blogObject.title}' removed!`)
       } catch (error) {
@@ -86,7 +86,7 @@ const App = () => {
           user: blogObject.user.id,
         })
         .then((updatedBlog) => {
-          setBlogs(blogs.map((b) => (b.id === blogObject.id ? updatedBlog : b)))
+          likeBlog(blogObject.id, updatedBlog.likes)
           notify(
             `Like added to: '${updatedBlog.title}' by ${updatedBlog.author}`,
           )

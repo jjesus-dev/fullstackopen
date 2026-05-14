@@ -4,10 +4,21 @@ const useBlogsStore = create((set) => ({
   blogs: [],
   actions: {
     createBlog: (blog) => set((state) => ({ blogs: state.blogs.concat(blog) })),
-    setBlogs: (blogs) =>
-      set(() => ({
-        blogs: blogs,
+    likeBlog: (id, likes) =>
+      set((state) => ({
+        blogs: state.blogs.map((b) => {
+          // Updates only the property `likes` instead of all the object
+          var temp = Object.assign({}, b)
+          if (temp.id === id) {
+            temp.likes = likes
+          }
+
+          return temp
+        }),
       })),
+    removeBlog: (id) =>
+      set((state) => ({ blogs: state.blogs.filter((b) => b.id !== id) })),
+    setBlogs: (blogs) => set(() => ({ blogs: blogs })),
   },
 }))
 
