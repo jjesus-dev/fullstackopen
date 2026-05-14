@@ -9,14 +9,16 @@ import LoginForm from './components/LoginForm'
 import ErrorBoundary from './components/ErrorBoundary'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useNotification, useNotificationActions } from './store'
 
 const App = () => {
+  const navigation = useNavigate()
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
-  const navigation = useNavigate()
+  const notification = useNotification()
+  const { updateMessage } = useNotificationActions()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -32,9 +34,9 @@ const App = () => {
   }, [])
 
   const notify = (text, type = 'success') => {
-    setNotification({ text, type })
+    updateMessage({ text, type })
     setTimeout(() => {
-      setNotification(null)
+      updateMessage(null)
     }, 5000)
   }
 
