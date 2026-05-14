@@ -9,20 +9,26 @@ import LoginForm from './components/LoginForm'
 import ErrorBoundary from './components/ErrorBoundary'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useNotification, useNotificationActions } from './store'
+import {
+  useBlogs,
+  useBlogsActions,
+  useNotification,
+  useNotificationActions,
+} from './store'
 
 const App = () => {
   const navigation = useNavigate()
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const notification = useNotification()
   const { updateMessage } = useNotificationActions()
+  const blogs = useBlogs()
+  const { createBlog, setBlogs } = useBlogsActions()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+  }, [setBlogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -43,7 +49,7 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       await blogService.create(blogObject).then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog))
+        createBlog(returnedBlog)
         navigation('/')
         notify(`Blog created: ${returnedBlog.title}`)
       })

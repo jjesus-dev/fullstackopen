@@ -3,12 +3,16 @@ import { create } from 'zustand'
 const useBlogsStore = create((set) => ({
   blogs: [],
   actions: {
-    add: (blog) => set((state) => state.blogs.concat(blog)),
+    createBlog: (blog) => set((state) => ({ blogs: state.blogs.concat(blog) })),
+    setBlogs: (blogs) =>
+      set(() => ({
+        blogs: blogs,
+      })),
   },
 }))
 
 export const useBlogs = () => useBlogsStore((state) => state.blogs)
-export const useBlogsControls = () => useBlogsStore((state) => state.actions)
+export const useBlogsActions = () => useBlogsStore((state) => state.actions)
 
 const useNotificationStore = create((set) => ({
   notification: '',
