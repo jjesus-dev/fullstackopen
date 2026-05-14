@@ -27,7 +27,7 @@ const App = () => {
   const { createBlog, likeBlog, removeBlog, setBlogs } = useBlogsActions()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    setBlogs()
   }, [setBlogs])
 
   useEffect(() => {
@@ -48,11 +48,9 @@ const App = () => {
 
   const addBlog = async (blogObject) => {
     try {
-      await blogService.create(blogObject).then((returnedBlog) => {
-        createBlog(returnedBlog)
-        navigation('/')
-        notify(`Blog created: ${returnedBlog.title}`)
-      })
+      createBlog(blogObject)
+      navigation('/')
+      notify(`Blog created: ${blogObject.title}`)
     } catch (error) {
       console.log(error)
       notify('Error adding a blog', 'error')

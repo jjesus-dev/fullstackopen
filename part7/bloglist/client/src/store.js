@@ -1,9 +1,13 @@
 import { create } from 'zustand'
+import blogService from './services/blogs'
 
 const useBlogsStore = create((set) => ({
   blogs: [],
   actions: {
-    createBlog: (blog) => set((state) => ({ blogs: state.blogs.concat(blog) })),
+    createBlog: async (blog) => {
+      const newBlog = await blogService.create(blog)
+      set((state) => ({ blogs: state.blogs.concat(newBlog) }))
+    },
     likeBlog: (id, likes) =>
       set((state) => ({
         blogs: state.blogs.map((b) => {
@@ -18,7 +22,10 @@ const useBlogsStore = create((set) => ({
       })),
     removeBlog: (id) =>
       set((state) => ({ blogs: state.blogs.filter((b) => b.id !== id) })),
-    setBlogs: (blogs) => set(() => ({ blogs: blogs })),
+    setBlogs: async () => {
+      const blogs = await blogService.getAll()
+      set(() => ({ blogs }))
+    },
   },
 }))
 
