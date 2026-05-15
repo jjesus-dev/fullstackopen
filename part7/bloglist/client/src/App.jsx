@@ -64,7 +64,6 @@ const App = () => {
       )
     ) {
       try {
-        await blogService.remove(blogObject.id)
         removeBlog(blogObject.id)
         navigation('/')
         notify(`Blog entry '${blogObject.title}' removed!`)
@@ -77,18 +76,8 @@ const App = () => {
 
   const handleLike = async (blogObject) => {
     try {
-      await blogService
-        .update(blogObject.id, {
-          ...blogObject,
-          likes: blogObject.likes + 1,
-          user: blogObject.user.id,
-        })
-        .then((updatedBlog) => {
-          likeBlog(blogObject.id, updatedBlog.likes)
-          notify(
-            `Like added to: '${updatedBlog.title}' by ${updatedBlog.author}`,
-          )
-        })
+      likeBlog(blogObject.id)
+      notify(`Like added to: '${blogObject.title}'`)
     } catch (error) {
       console.log(error)
       notify('Error liking a blog', 'error')

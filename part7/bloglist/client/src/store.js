@@ -8,20 +8,28 @@ const useBlogsStore = create((set) => ({
       const newBlog = await blogService.create(blog)
       set((state) => ({ blogs: state.blogs.concat(newBlog) }))
     },
-    likeBlog: (id, likes) =>
+    likeBlog: async (id) => {
+      const blog = useBlogsStore.getState().blogs.find((b) => b.id === id)
+      const updatedBlog = await blogService.update(id, {
+        ...blog,
+        likes: blog.likes + 1,
+      })
       set((state) => ({
         blogs: state.blogs.map((b) => {
           // Updates only the property `likes` instead of all the object
           var temp = Object.assign({}, b)
           if (temp.id === id) {
-            temp.likes = likes
+            temp.likes = updatedBlog.likes
           }
 
           return temp
         }),
-      })),
-    removeBlog: (id) =>
-      set((state) => ({ blogs: state.blogs.filter((b) => b.id !== id) })),
+      }))
+    },
+    removeBlog: async (id) => {
+      await blogService.remove(id)
+      set((state) => ({ blogs: state.blogs.filter((b) => b.id !== id) }))
+    },
     setBlogs: async () => {
       const blogs = await blogService.getAll()
       set(() => ({ blogs }))
