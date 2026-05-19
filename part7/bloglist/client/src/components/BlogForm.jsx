@@ -1,23 +1,21 @@
-import { useState } from 'react'
+import { useField } from '../useField'
 import { TextField, Button } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
+  const title = useField('text')
+  const url = useField('text')
+  const author = useField('text')
 
   const addNewBlog = (e) => {
     e.preventDefault()
 
     createBlog({
-      title: title,
-      url: url,
-      author: author,
+      title: title.value,
+      url: url.value,
+      author: author.value,
     })
 
-    setAuthor('')
-    setTitle('')
-    setUrl('')
+    e.target.reset()
   }
 
   const separatorStyle = {
@@ -31,22 +29,18 @@ const BlogForm = ({ createBlog }) => {
         <div style={separatorStyle}>
           <TextField
             label="Title:"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={title.value}
+            onChange={title.onChange}
           />
         </div>
         <div style={separatorStyle}>
-          <TextField
-            label="Url:"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
+          <TextField label="Url:" value={url.value} onChange={url.onChange} />
         </div>
         <div style={separatorStyle}>
           <TextField
             label="Author:"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={author.value}
+            onChange={author.onChange}
           />
         </div>
         <div style={separatorStyle}>

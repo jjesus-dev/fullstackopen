@@ -10,8 +10,20 @@ import {
 
 const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
   // conditional rendering in case `blog` or `loggedUser` aren't defined
-  if (!blog || !loggedUser) {
-    return null
+  if (!blog) {
+    return (
+      <Typography variant="h5" component="div" sx={{ marginTop: 2 }}>
+        This blog doesn't exist.
+      </Typography>
+    )
+  }
+
+  if (!loggedUser) {
+    return (
+      <Typography variant="h5" component="div" sx={{ marginTop: 2 }}>
+        Please log in first.
+      </Typography>
+    )
   }
 
   const blogUser = blog.user ? blog.user.name : 'anonymous'

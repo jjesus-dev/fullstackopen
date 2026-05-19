@@ -1,12 +1,6 @@
 import { TextField, Button } from '@mui/material'
 
-const LoginForm = ({
-  handleLogin,
-  handleUsernameChange,
-  handlePasswordChange,
-  username,
-  password,
-}) => {
+const LoginForm = ({ handleLogin, username, password }) => {
   const separatorStyle = {
     marginTop: 10,
   }
@@ -19,8 +13,8 @@ const LoginForm = ({
           <TextField
             id="username"
             label="Username:"
-            value={username}
-            onChange={handleUsernameChange}
+            value={username.value}
+            onChange={username.onChange}
           />
         </div>
 
@@ -29,8 +23,8 @@ const LoginForm = ({
             id="password"
             label="Password:"
             type="password"
-            value={password}
-            onChange={handlePasswordChange}
+            value={password.value}
+            onChange={password.onChange}
           />
         </div>
         <div style={separatorStyle}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
 import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import Notification from './components/Notification'
@@ -6,44 +6,55 @@ import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import ErrorBoundary from './components/ErrorBoundary'
+import { getUser } from './services/persistentUser'
 import blogService from './services/blogs'
-import loginService from './services/login'
+import {
+  useBlogs,
+  useBlogsActions,
+  useNotification,
+  useNotificationActions,
+  useUserStore,
+} from './store'
+import { useField } from './useField'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
   const navigation = useNavigate()
+  const username = useField('text')
+  const password = useField('password')
+  const notification = useNotification()
+  const { updateMessage } = useNotificationActions()
+  const blogs = useBlogs()
+  const { createBlog, likeBlog, removeBlog, setBlogs } = useBlogsActions()
+  const user = useUserStore((state) => state.user)
+  const login = useUserStore((state) => state.login)
+  const logout = useUserStore((state) => state.logout)
+  const setUser = useUserStore((state) => state.setUser)
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    setBlogs()
+  }, [setBlogs])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    const loggedUserJSON = getUser()
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      setUser(loggedUserJSON)
+      blogService.setToken(loggedUserJSON.token)
     }
-  }, [])
+  }, [setUser])
 
   const notify = (text, type = 'success') => {
-    setNotification({ text, type })
+    updateMessage({ text, type })
     setTimeout(() => {
-      setNotification(null)
+      updateMessage(null)
     }, 5000)
   }
 
   const addBlog = async (blogObject) => {
     try {
-      await blogService.create(blogObject).then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog))
-        navigation('/')
-        notify(`Blog created: ${returnedBlog.title}`)
-      })
+      createBlog(blogObject)
+      navigation('/')
+      notify(`Blog created: ${blogObject.title}`)
     } catch (error) {
       console.log(error)
       notify('Error adding a blog', 'error')
@@ -57,8 +68,7 @@ const App = () => {
       )
     ) {
       try {
-        await blogService.remove(blogObject.id)
-        setBlogs(blogs.filter((b) => b.id !== blogObject.id))
+        removeBlog(blogObject.id)
         navigation('/')
         notify(`Blog entry '${blogObject.title}' removed!`)
       } catch (error) {
@@ -70,18 +80,8 @@ const App = () => {
 
   const handleLike = async (blogObject) => {
     try {
-      await blogService
-        .update(blogObject.id, {
-          ...blogObject,
-          likes: blogObject.likes + 1,
-          user: blogObject.user.id,
-        })
-        .then((updatedBlog) => {
-          setBlogs(blogs.map((b) => (b.id === blogObject.id ? updatedBlog : b)))
-          notify(
-            `Like added to: '${updatedBlog.title}' by ${updatedBlog.author}`,
-          )
-        })
+      likeBlog(blogObject.id)
+      notify(`Like added to: '${blogObject.title}'`)
     } catch (error) {
       console.log(error)
       notify('Error liking a blog', 'error')
@@ -92,14 +92,13 @@ const App = () => {
     e.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      await login(username.value, password.value)
+      const loggedUser = useUserStore.getState().user
+      blogService.setToken(loggedUser.token)
+      username.clearText()
+      password.clearText()
       navigation('/')
-      notify(`Welcome back, ${user.name}`)
+      notify(`Welcome back, ${loggedUser.name}`)
     } catch (error) {
       console.log(error)
       notify('Wrong credentials', 'error')
@@ -110,9 +109,8 @@ const App = () => {
     e.preventDefault()
 
     try {
-      window.localStorage.removeItem('loggedBlogAppUser')
+      logout()
       blogService.setToken(null)
-      setUser(null)
       navigation('/')
       notify(`Bye, ${user.name}`)
     } catch (error) {
@@ -125,8 +123,6 @@ const App = () => {
     <LoginForm
       username={username}
       password={password}
-      handleUsernameChange={({ target }) => setUsername(target.value)}
-      handlePasswordChange={({ target }) => setPassword(target.value)}
       handleLogin={handleLogin}
     />
   )
@@ -179,24 +175,34 @@ const App = () => {
         </Toolbar>
       </AppBar>
 
-      <Notification notification={notification} />
+      <ErrorBoundary>
+        <Notification notification={notification} />
 
-      <Routes>
-        <Route path="/" element={<BlogList blogs={blogs} />} />
-        <Route path="/login" element={loginForm()} />
-        <Route
-          path="/blogs/:id"
-          element={
-            <Blog
-              blog={blog}
-              loggedUser={user}
-              likeBlog={() => handleLike(blog)}
-              deleteBlog={() => handleDelete(blog)}
-            />
-          }
-        />
-        <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<BlogList blogs={blogs} />} />
+          <Route path="/login" element={loginForm()} />
+          <Route
+            path="/blogs/:id"
+            element={
+              <Blog
+                blog={blog}
+                loggedUser={user}
+                likeBlog={() => handleLike(blog)}
+                deleteBlog={() => handleDelete(blog)}
+              />
+            }
+          />
+          <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+          <Route
+            path="/*"
+            element={
+              <div>
+                <h2>404 - Page Not Found.</h2>
+              </div>
+            }
+          />
+        </Routes>
+      </ErrorBoundary>
     </Container>
   )
 }
