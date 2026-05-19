@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
 import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import Notification from './components/Notification'
@@ -7,37 +7,41 @@ import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import ErrorBoundary from './components/ErrorBoundary'
+import { getUser } from './services/persistentUser'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import {
   useBlogs,
   useBlogsActions,
   useNotification,
   useNotificationActions,
+  useUserStore,
 } from './store'
+import { useField } from './useField'
 
 const App = () => {
   const navigation = useNavigate()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const username = useField('text')
+  const password = useField('password')
   const notification = useNotification()
   const { updateMessage } = useNotificationActions()
   const blogs = useBlogs()
   const { createBlog, likeBlog, removeBlog, setBlogs } = useBlogsActions()
+  const user = useUserStore((state) => state.user)
+  const login = useUserStore((state) => state.login)
+  const logout = useUserStore((state) => state.logout)
+  const setUser = useUserStore((state) => state.setUser)
 
   useEffect(() => {
     setBlogs()
   }, [setBlogs])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    const loggedUserJSON = getUser()
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      setUser(loggedUserJSON)
+      blogService.setToken(loggedUserJSON.token)
     }
-  }, [])
+  }, [setUser])
 
   const notify = (text, type = 'success') => {
     updateMessage({ text, type })
@@ -88,14 +92,13 @@ const App = () => {
     e.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      await login(username.value, password.value)
+      const loggedUser = useUserStore.getState().user
+      blogService.setToken(loggedUser.token)
+      username.clearText()
+      password.clearText()
       navigation('/')
-      notify(`Welcome back, ${user.name}`)
+      notify(`Welcome back, ${loggedUser.name}`)
     } catch (error) {
       console.log(error)
       notify('Wrong credentials', 'error')
@@ -106,9 +109,8 @@ const App = () => {
     e.preventDefault()
 
     try {
-      window.localStorage.removeItem('loggedBlogAppUser')
+      logout()
       blogService.setToken(null)
-      setUser(null)
       navigation('/')
       notify(`Bye, ${user.name}`)
     } catch (error) {
@@ -121,8 +123,6 @@ const App = () => {
     <LoginForm
       username={username}
       password={password}
-      handleUsernameChange={({ target }) => setUsername(target.value)}
-      handlePasswordChange={({ target }) => setPassword(target.value)}
       handleLogin={handleLogin}
     />
   )
