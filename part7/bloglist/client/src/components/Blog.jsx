@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Link,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Card, CardContent, Link, Typography } from '@mui/material'
 
 const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
   // conditional rendering in case `blog` or `loggedUser` aren't defined

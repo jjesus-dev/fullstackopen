@@ -6,6 +6,7 @@ import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import User from './components/User'
 import UserList from './components/UserList'
 import ErrorBoundary from './components/ErrorBoundary'
 import { getUser } from './services/persistentUser'
@@ -138,6 +139,11 @@ const App = () => {
     ? blogs.find((b) => b.id === blogMatch.params.id)
     : null
 
+  const userMatch = useMatch('/users/:id')
+  const selectedUser = userMatch
+    ? users.find((u) => u.id === userMatch.params.id)
+    : null
+
   const hoverNavStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   return (
@@ -207,6 +213,11 @@ const App = () => {
             }
           />
           <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+          <Route path="/users" element={<UserList users={users} />} />
+          <Route
+            path="/users/:id"
+            element={<User user={selectedUser} loggedUser={user} />}
+          />
           <Route
             path="/*"
             element={
@@ -215,7 +226,6 @@ const App = () => {
               </div>
             }
           />
-          <Route path="/users" element={<UserList users={users} />} />
         </Routes>
       </ErrorBoundary>
     </Container>
