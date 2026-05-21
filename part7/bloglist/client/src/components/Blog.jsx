@@ -1,4 +1,14 @@
-import { Box, Button, Card, CardContent, Link, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Link,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material'
 
 const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
   // conditional rendering in case `blog` or `loggedUser` aren't defined
@@ -25,6 +35,11 @@ const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
     }
 
     return false
+  }
+
+  const formatDate = (timestamp) => {
+    const formattedDate = new Date(timestamp).toUTCString()
+    return formattedDate
   }
 
   return (
@@ -62,6 +77,26 @@ const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
               remove
             </Button>
           )}
+        </Box>
+        <hr />
+        <Box
+          sx={{
+            marginTop: 2,
+          }}
+        >
+          <Typography variant="h6" component="div">
+            Comments
+          </Typography>
+          <List>
+            {blog.comments.map((c) => (
+              <ListItem key={c.id}>
+                <ListItemText
+                  primary={c.content}
+                  secondary={formatDate(c.commentedAt)}
+                />
+              </ListItem>
+            ))}
+          </List>
         </Box>
       </CardContent>
     </Card>
