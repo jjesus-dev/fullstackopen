@@ -14,6 +14,7 @@ import blogService from './services/blogs'
 import {
   useBlogs,
   useBlogsActions,
+  useCommentsActions,
   useNotification,
   useNotificationActions,
   useSessionStore,
@@ -36,6 +37,7 @@ const App = () => {
   const setUser = useSessionStore((state) => state.setUser)
   const users = useUsers()
   const { setUsers } = useUsersActions()
+  const { createComment } = useCommentsActions()
 
   useEffect(() => {
     setBlogs()
@@ -65,6 +67,17 @@ const App = () => {
     } catch (error) {
       console.log(error)
       notify('Error adding a blog', 'error')
+    }
+  }
+
+  const addComment = async (commentObject) => {
+    try {
+      createComment(commentObject)
+      //navigation('/')
+      notify(`Comment added! '${commentObject.content}'`)
+    } catch (error) {
+      console.log(error)
+      notify('Error adding a comment', 'error')
     }
   }
 
@@ -209,6 +222,7 @@ const App = () => {
                 loggedUser={user}
                 likeBlog={() => handleLike(blog)}
                 deleteBlog={() => handleDelete(blog)}
+                createComment={addComment}
               />
             }
           />

@@ -1,8 +1,9 @@
 import { create } from 'zustand'
 import blogService from './services/blogs'
+import commentService from './services/comments'
 import userService from './services/users'
 import loginService from './services/login'
-import { saveUser, removeUser } from './services/persistentUser'
+import { getUser, saveUser, removeUser } from './services/persistentUser'
 
 const useBlogsStore = create((set) => ({
   blogs: [],
@@ -81,3 +82,26 @@ const useUsersStore = create((set) => ({
 
 export const useUsers = () => useUsersStore((state) => state.users)
 export const useUsersActions = () => useUsersStore((state) => state.actions)
+
+const useCommentsStore = create((set) => ({
+  comments: [],
+  actions: {
+    createComment: async (comment) => {
+      const loggedUserJSON = getUser()
+      if (loggedUserJSON) {
+        commentService.setToken(loggedUserJSON.token)
+      }
+
+      const newComment = await commentService.create(comment)
+      set((state) => ({ comments: state.comments.concat(newComment) }))
+    },
+    setComments: async (id) => {
+      const comments = await commentService.getFromBlog(id)
+      set(() => ({ comments: comments }))
+    },
+  },
+}))
+
+export const useComments = () => useCommentsStore((state) => state.comments)
+export const useCommentsActions = () =>
+  useCommentsStore((state) => state.actions)
