@@ -1,14 +1,31 @@
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { useField } from '../useField'
+import { useComments, useCommentsActions } from '../store'
 import {
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
   Link,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
   Typography,
 } from '@mui/material'
 
-const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
+const Blog = ({ blog, loggedUser, likeBlog, deleteBlog, createComment }) => {
+  const content = useField('text')
+  const comments = useComments((state) => state.comments)
+  const { setComments } = useCommentsActions()
+
+  const blogId = useParams().id
+
+  useEffect(() => {
+    setComments(blogId)
+  }, [setComments, blogId])
+
   // conditional rendering in case `blog` or `loggedUser` aren't defined
   if (!blog) {
     return (
@@ -33,6 +50,30 @@ const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
     }
 
     return false
+  }
+
+  const addNewComment = (e) => {
+    e.preventDefault()
+
+    createComment({
+      content: content.value,
+      blogId: blogId,
+    })
+
+    content.clearText()
+    e.target.reset()
+  }
+
+  const formatDate = (timestamp) => {
+    const formattedDate = new Date(timestamp).toUTCString()
+    return formattedDate
+  }
+
+  const separatorStyle = {
+    marginTop: 10,
+    display: 'flex',
+    alignItems: 'center',
+    columnGap: 12,
   }
 
   return (
@@ -70,6 +111,40 @@ const Blog = ({ blog, loggedUser, likeBlog, deleteBlog }) => {
               remove
             </Button>
           )}
+        </Box>
+        <hr />
+        <Box
+          sx={{
+            marginTop: 2,
+          }}
+        >
+          <Typography variant="h6" component="div">
+            Comments
+          </Typography>
+          <form onSubmit={addNewComment} id="commentForm">
+            <Box style={separatorStyle}>
+              <TextField
+                label="Write a new comment..."
+                value={content.value}
+                onChange={content.onChange}
+                size="small"
+              />
+
+              <Button type="submit" variant="contained">
+                Add Comment
+              </Button>
+            </Box>
+          </form>
+          <List>
+            {comments?.map((c) => (
+              <ListItem key={c.id}>
+                <ListItemText
+                  primary={c.content}
+                  secondary={formatDate(c.commentedAt)}
+                />
+              </ListItem>
+            ))}
+          </List>
         </Box>
       </CardContent>
     </Card>

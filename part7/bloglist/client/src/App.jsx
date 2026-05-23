@@ -6,15 +6,20 @@ import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import User from './components/User'
+import UserList from './components/UserList'
 import ErrorBoundary from './components/ErrorBoundary'
 import { getUser } from './services/persistentUser'
 import blogService from './services/blogs'
 import {
   useBlogs,
   useBlogsActions,
+  useCommentsActions,
   useNotification,
   useNotificationActions,
-  useUserStore,
+  useSessionStore,
+  useUsers,
+  useUsersActions,
 } from './store'
 import { useField } from './useField'
 
@@ -26,14 +31,18 @@ const App = () => {
   const { updateMessage } = useNotificationActions()
   const blogs = useBlogs()
   const { createBlog, likeBlog, removeBlog, setBlogs } = useBlogsActions()
-  const user = useUserStore((state) => state.user)
-  const login = useUserStore((state) => state.login)
-  const logout = useUserStore((state) => state.logout)
-  const setUser = useUserStore((state) => state.setUser)
+  const user = useSessionStore((state) => state.user)
+  const login = useSessionStore((state) => state.login)
+  const logout = useSessionStore((state) => state.logout)
+  const setUser = useSessionStore((state) => state.setUser)
+  const users = useUsers()
+  const { setUsers } = useUsersActions()
+  const { createComment } = useCommentsActions()
 
   useEffect(() => {
     setBlogs()
-  }, [setBlogs])
+    setUsers()
+  }, [setBlogs, setUsers])
 
   useEffect(() => {
     const loggedUserJSON = getUser()
@@ -58,6 +67,17 @@ const App = () => {
     } catch (error) {
       console.log(error)
       notify('Error adding a blog', 'error')
+    }
+  }
+
+  const addComment = async (commentObject) => {
+    try {
+      createComment(commentObject)
+      //navigation('/')
+      notify(`Comment added! '${commentObject.content}'`)
+    } catch (error) {
+      console.log(error)
+      notify('Error adding a comment', 'error')
     }
   }
 
@@ -93,7 +113,7 @@ const App = () => {
 
     try {
       await login(username.value, password.value)
-      const loggedUser = useUserStore.getState().user
+      const loggedUser = useSessionStore.getState().user
       blogService.setToken(loggedUser.token)
       username.clearText()
       password.clearText()
@@ -132,15 +152,28 @@ const App = () => {
     ? blogs.find((b) => b.id === blogMatch.params.id)
     : null
 
-  const hoverNavStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
+  const userMatch = useMatch('/users/:id')
+  const selectedUser = userMatch
+    ? users.find((u) => u.id === userMatch.params.id)
+    : null
+
+  const hoverNavStyle = { '&:hover': { bgcolor: '#f50057' } }
 
   return (
     <Container>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar sx={{ backgroundColor: '#b53f45' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             BlogApp
           </Typography>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/users"
+            sx={hoverNavStyle}
+          >
+            Users
+          </Button>
           <Button color="inherit" component={Link} to="/" sx={hoverNavStyle}>
             Blogs
           </Button>
@@ -189,10 +222,16 @@ const App = () => {
                 loggedUser={user}
                 likeBlog={() => handleLike(blog)}
                 deleteBlog={() => handleDelete(blog)}
+                createComment={addComment}
               />
             }
           />
           <Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+          <Route path="/users" element={<UserList users={users} />} />
+          <Route
+            path="/users/:id"
+            element={<User user={selectedUser} loggedUser={user} />}
+          />
           <Route
             path="/*"
             element={

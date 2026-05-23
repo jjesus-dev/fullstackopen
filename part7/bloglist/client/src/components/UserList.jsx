@@ -9,10 +9,9 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import Blog from './Blog'
 
-const BlogList = ({ blogs }) => {
-  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+const UserList = ({ users }) => {
+  const sortedUsers = users.toSorted((a, b) => a.name > b.name)
 
   const linkStyle = {
     color: 'rgb(171, 0, 60)',
@@ -22,26 +21,28 @@ const BlogList = ({ blogs }) => {
   return (
     <div>
       <Typography variant="h5" component="div" sx={{ margin: 2 }}>
-        Blogs
+        Users
       </Typography>
 
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Author</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Username</TableCell>
+              <TableCell>Blogs created</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedBlogs.map((blog) => (
-              <TableRow key={blog.id}>
+            {sortedUsers.map((user) => (
+              <TableRow key={user.id}>
                 <TableCell>
-                  <Link to={`/blogs/${blog.id}`} style={linkStyle}>
-                    {blog.title}
+                  <Link to={`/users/${user.id}`} style={linkStyle}>
+                    {user.name}
                   </Link>
                 </TableCell>
-                <TableCell>{blog.author}</TableCell>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.blogs.length}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -51,4 +52,4 @@ const BlogList = ({ blogs }) => {
   )
 }
 
-export default BlogList
+export default UserList
