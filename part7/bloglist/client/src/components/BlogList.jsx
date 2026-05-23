@@ -15,7 +15,7 @@ const BlogList = ({ blogs }) => {
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   const linkStyle = {
-    color: '#1C71D8',
+    color: 'rgb(171, 0, 60)',
     textDecoration: 'none',
   }
 

@@ -157,12 +157,12 @@ const App = () => {
     ? users.find((u) => u.id === userMatch.params.id)
     : null
 
-  const hoverNavStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
+  const hoverNavStyle = { '&:hover': { bgcolor: '#f50057' } }
 
   return (
     <Container>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar sx={{ backgroundColor: '#b53f45' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             BlogApp
           </Typography>

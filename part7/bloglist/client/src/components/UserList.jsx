@@ -14,7 +14,7 @@ const UserList = ({ users }) => {
   const sortedUsers = users.toSorted((a, b) => a.name > b.name)
 
   const linkStyle = {
-    color: '#1C71D8',
+    color: 'rgb(171, 0, 60)',
     textDecoration: 'none',
   }
 
